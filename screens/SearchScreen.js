@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   FlatList,
   Image,
   StyleSheet,
@@ -13,218 +12,313 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import {
-  getAccountByRiotId,
-  getMatchList,
-  getMatchDetails,
-  getChampionList,
-} from '../api/api';
+import { Ionicons } from '@expo/vector-icons';
+import { getChampionList, getPlayerList } from '../api/api';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { getAuth } from 'firebase/auth';
+
 
 if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental?.(true);
 }
 
-const gameModeMap = {
-  CLASSIC: 'Solo/Duo',
-  ARAM: 'ARAM',
-  URF: 'URF',
-  ONEFORALL: 'One for All',
-};
-
 export default function SearchScreen() {
+  const [expandedChampion, setExpandedChampion] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const [matchData, setMatchData] = useState([]);
   const [champions, setChampions] = useState({});
   const [loading, setLoading] = useState(false);
-  const [expandedMatch, setExpandedMatch] = useState(null);
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+
+  const toggleChampionExpand = (championId) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpandedChampion(prev => (prev === championId ? null : championId));
+  };
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const champList = await getChampionList();
       const champMap = {};
-      Object.values(champList).forEach(champ => {
+      const champArray = Object.values(champList);
+
+      champArray.forEach(champ => {
         champMap[parseInt(champ.key)] = {
-          name: champ.id,
-          icon: `https://ddragon.leagueoflegends.com/cdn/14.8.1/img/champion/${champ.id}.png`,
+          name: champ.name,
+          title: champ.title,
+          tags: champ.tags,
+          blurb: champ.blurb,
+          splash: champ.image,
+          icon: champ.icon,
         };
       });
       setChampions(champMap);
 
-      const [gameName, tagLine] = searchInput.split('#');
+      const playerList = await getPlayerList();
 
-      // 🧠 Se for apenas um nome, fazer busca de campeão
-      if (!tagLine) {
-        const filtered = Object.values(champList).filter(champ =>
-          champ.id.toLowerCase().includes(searchInput.toLowerCase())
-        );
+      const input = (searchInput || '').toLowerCase();
 
-        if (filtered.length === 0) {
-          alert('Campeão não encontrado.');
-        } else {
-          const champResults = filtered.map(champ => ({
-            matchId: champ.key,
-            championId: parseInt(champ.key),
-            isChampionSearch: true,
-          }));
-          setMatchData(champResults);
-        }
+      const filteredChampions = champArray.filter(champ =>
+        champ.name.toLowerCase().includes(input) ||
+        champ.id.toLowerCase().includes(input)
+      );
 
-        setLoading(false);
-        return;
+      const filteredPlayers = playerList.filter(player =>
+        (player.name?.toLowerCase() || '').includes(input) ||
+        (player.id?.toLowerCase() || '').includes(input)
+      );
+
+      if (filteredChampions.length === 0 && filteredPlayers.length === 0) {
+        alert('Nenhum resultado encontrado.');
+      } else {
+        const champResults = filteredChampions.map(champ => ({
+          matchId: champ.key,
+          championId: parseInt(champ.key),
+          isChampionSearch: true,
+        }));
+
+        const playerResults = filteredPlayers.map(player => ({
+          matchId: player.id,
+          playerData: player,
+          isPlayerSearch: true,
+        }));
+
+        setMatchData([...champResults, ...playerResults]);
       }
-
-      // 🔎 Se for Riot ID, continuar com a busca normal
-      const account = await getAccountByRiotId(gameName, tagLine);
-      const matchIds = await getMatchList(account.puuid);
-
-      const matchPromises = matchIds.map(id => getMatchDetails(id));
-      const matches = await Promise.all(matchPromises);
-
-      const playerMatches = matches.map(match => {
-        const player = match.info.participants.find(p => p.puuid === account.puuid);
-        return {
-          matchId: match.metadata.matchId,
-          championId: player.championId,
-          kills: player.kills,
-          deaths: player.deaths,
-          assists: player.assists,
-          win: player.win,
-          gameMode: match.info.gameMode,
-          players: match.info.participants,
-          puuid: account.puuid,
-        };
-      });
-
-      setMatchData(playerMatches);
     } catch (error) {
-      console.error('Erro ao buscar dados:', error);
-      alert('Erro ao buscar dados. Verifique se o Riot ID ou nome do campeão está correto.');
+      console.error('Erro:', error);
+      alert('Erro ao buscar dados.');
     } finally {
       setLoading(false);
     }
   };
 
-  const toggleExpand = (matchId) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setExpandedMatch(prev => (prev === matchId ? null : matchId));
-  };
-
-  const renderDetails = (players) => (
-    <View style={styles.detailsContainer}>
-      {players.map((player, index) => (
-        <View key={index} style={styles.playerRow}>
-          <Image
-            source={{ uri: champions[player.championId]?.icon }}
-            style={styles.iconSmall}
-          />
-          <Text style={{ flex: 1 }}>{player.summonerName || 'Desconhecido'}</Text>
-          <Text>KDA: {player.kills}/{player.deaths}/{player.assists}</Text>
-        </View>
-      ))}
-    </View>
-  );
-
   const renderItem = ({ item }) => {
     if (item.isChampionSearch) {
+      const champ = champions[item.championId];
+      const isExpanded = expandedChampion === item.championId;
+
+      return (
+        <TouchableOpacity
+          onPress={() => toggleChampionExpand(item.championId)}
+          activeOpacity={0.9}
+        >
+          <View style={styles.card}>
+            <Image
+              source={{ uri: champ?.splash }}
+              style={styles.splashImage}
+              resizeMode="cover"
+            />
+            <View style={{ padding: 12 }}>
+              <Text style={styles.champion}>{champ?.name}</Text>
+              <Text style={styles.title}>{champ?.title}</Text>
+              <Text style={styles.tags}>Funções: {champ?.tags?.join(', ')}</Text>
+              {isExpanded ? (
+                <Text style={styles.blurb}>{champ?.blurb}</Text>
+              ) : (
+                <Text style={styles.blurb} numberOfLines={3}>
+                  {champ?.blurb}
+                </Text>
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
+    }
+
+    if (item.isPlayerSearch) {
+      const player = item.playerData;
+
       return (
         <View style={styles.card}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Image source={{ uri: champions[item.championId]?.icon }} style={styles.icon} />
-            <Text style={styles.champion}>{champions[item.championId]?.name}</Text>
+          {player.image ? (
+            <Image source={{ uri: player.image }} style={styles.splashImage} />
+          ) : (
+            <Text style={{ color: 'white', marginBottom: 10 }}>[Imagem indisponível]</Text>
+          )}
+          <View style={{ padding: 12 }}>
+            <Text style={styles.champion}>{player.name || 'Nome desconhecido'}</Text>
+            <Text style={styles.title}>
+              Time: {player.team || 'Sem time'} • Função: {player.role || 'N/A'}
+            </Text>
+            <Text style={styles.tags}>KDA: {player.kda || 'N/A'}</Text>
+            <Text style={styles.blurb}>{player.bio || 'Sem biografia disponível.'}</Text>
           </View>
         </View>
       );
     }
 
-    return (
-      <TouchableOpacity
-        onPress={() => toggleExpand(item.matchId)}
-        style={[styles.card, { backgroundColor: item.win ? '#d4edda' : '#f8d7da' }]}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={{ uri: champions[item.championId]?.icon }} style={styles.icon} />
-          <View>
-            <Text style={styles.champion}>{champions[item.championId]?.name}</Text>
-            <Text>KDA: {item.kills}/{item.deaths}/{item.assists}</Text>
-            <Text>{item.win ? 'Vitória' : 'Derrota'} - {gameModeMap[item.gameMode] || item.gameMode}</Text>
-          </View>
-        </View>
-        {expandedMatch === item.matchId && renderDetails(item.players)}
-      </TouchableOpacity>
-    );
+    return null;
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Pesquisar Jogador ou Campeão</Text>
-      <TextInput
-        placeholder="Digite Riot ID (ex: Player#BR1) ou nome do campeão"
-        value={searchInput}
-        onChangeText={setSearchInput}
-        style={styles.input}
-      />
-      <Button title="Buscar" onPress={fetchData} disabled={loading} />
-      {loading ? (
-        <Text>Carregando...</Text>
-      ) : (
-        <FlatList
-          data={matchData}
-          keyExtractor={(item) => item.matchId}
-          renderItem={renderItem}
-          scrollEnabled={false}
-        />
-      )}
-    </ScrollView>
+    <SafeAreaView style={styles.container1} edges={['top']}>
+
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.containerInput}>
+          <Ionicons name="search" size={25} color="gray" style={styles.iconPesquisar} />
+          <TextInput
+            placeholder="Pesquisar Campeões..."
+            value={searchInput}
+            onChangeText={setSearchInput}
+            style={styles.input}
+            placeholderTextColor="#999"
+          />
+        </View>
+
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={fetchData}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? 'Carregando...' : 'Buscar'}
+          </Text>
+        </TouchableOpacity>
+
+        {!loading && (
+          <FlatList
+            data={matchData}
+            keyExtractor={(item) => item.matchId}
+            renderItem={renderItem}
+            scrollEnabled={false}
+          />
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container1: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 17,
+    marginTop: 30,
+  },
+  userName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  welcomeText: {
+    fontSize: 14,
+    color: '#aaa',
+  },
+  profileImage: {
+    width: 45,
+    height: 45,
+    borderRadius: 50,
+  },
   container: {
-    paddingTop: 50,
-    paddingHorizontal: 20,
-    paddingBottom: 100,
+    marginTop: 30,
+    flexGrow: 1,
+    backgroundColor: '#2B2B33',
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    paddingTop: 30,
+    paddingHorizontal: 17,
+    paddingBottom: 30,
   },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
-  },
-  card: {
-    flexDirection: 'column',
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  icon: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
-  },
-  iconSmall: {
-    width: 32,
-    height: 32,
-    marginRight: 10,
-  },
-  champion: {
-    fontWeight: 'bold',
-  },
-  detailsContainer: {
-    marginTop: 10,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
-    paddingTop: 10,
-  },
-  playerRow: {
+  containerInput: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#D9D9D9',
+    borderRadius: 90,
+    marginBottom: 20,
+    height: 55,
+    paddingHorizontal: 10,
+  },
+  iconPesquisar: {
+    marginHorizontal: 8,
+  },
+  input: {
+    flex: 1,
+    backgroundColor: '#D9D9D9',
+    borderRadius: 90,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    color: '#000',
+  },
+  button: {
+    backgroundColor: '#007BFF',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 90,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  buttonDisabled: {
+    backgroundColor: '#A9A9A9',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  card: {
+    backgroundColor: '#1f1f1f',
+    borderRadius: 20,
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
+  splashImage: {
+    width: '100%',
+    height: 200,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  champion: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 4,
+  },
+  title: {
+    fontSize: 16,
+    color: 'white',
     marginBottom: 6,
   },
+  tags: {
+    color: '#ccc',
+    fontStyle: 'italic',
+    marginBottom: 4,
+  },
+  blurb: {
+    color: '#aaa',
+    fontSize: 14,
+    marginTop: 4,
+    flexWrap: 'wrap',
+  },
+  profileContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingHorizontal: 17,
+  marginTop: 30,
+  marginBottom: 10,
+},
+avatar: {
+  width: 50,
+  height: 50,
+  borderRadius: 25,
+  marginRight: 15,
+},
+profileName: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  color: 'white',
+},
+profileRole: {
+  fontSize: 14,
+  color: '#aaa',
+},
+
 });

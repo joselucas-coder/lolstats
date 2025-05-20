@@ -1,6 +1,7 @@
 {
   "expo": {
-    "name": "lolstats",
+    "name": "Lolstats",
+     "owner": "joselicas",
     "slug": "lolstats",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -25,7 +26,11 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
-    ]
+      "expo-font",
+      "expo-sqlite"
+    ],
+    "updates": {
+      "enabled": false
+    }
   }
 }

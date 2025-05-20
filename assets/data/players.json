@@ -1,0 +1,65 @@
+[
+  {
+    "id": "faker",
+    "name": "Faker",
+    "image": "https://example.com/faker.jpg",
+    "team": "T1",
+    "role": "Mid",
+    "kda": "5.6",
+    "bio": "Considerado o melhor jogador de LoL da história."
+  },
+  {
+    "id": "deft",
+    "name": "Deft",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ojWA-kflPiC7v5mIuc-IrKezcuKPFNF0qEB8ONKKsVSVe00aSi1MgHsDJrVmkgmy34rxAObFRnmQ01ujzQVD1A",
+    "team": "DRX",
+    "role": "ADC",
+    "kda": "4.3",
+    "bio": "Campeão Mundial de 2022."
+  },
+  {
+    "id": "disamis",
+    "name": "Disamis",
+    "image": "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/a/aa/VKS_Disamis_LTA_2025_Split_1.png/revision/latest/scale-to-width-down/220?cb=20250409142802",
+    "team": "KEYD",
+    "role": "Jungle",
+    "kda": "4.3",
+    "bio": "Jogador da Keyd desde 2024"
+  },
+  {
+    "id": "route",
+    "name": "Route",
+    "image": "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/3/3d/LOUD_Route_LTA_2025_Split_1.png/revision/latest/scale-to-width-down/220?cb=20250213192640",
+    "team": "Loud",
+    "role": "ADC",
+    "kda": "4.3",
+    "bio": "Tri Campeão com a Loud"
+  },
+  {
+    "id": "titan",
+    "name": "Titan",
+    "image": "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/3/32/PAIN_TitaN_LTA_2025_Split_1.png/revision/latest/scale-to-width-down/220?cb=20250213190619",
+    "team": "Pain",
+    "role": "ADC",
+    "kda": "4.3",
+    "bio": "Campeão Mundial de 2022."
+  },
+  {
+    "id": "deft",
+    "name": "Deft",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ojWA-kflPiC7v5mIuc-IrKezcuKPFNF0qEB8ONKKsVSVe00aSi1MgHsDJrVmkgmy34rxAObFRnmQ01ujzQVD1A",
+    "team": "DRX",
+    "role": "ADC",
+    "kda": "4.3",
+    "bio": "Campeão Mundial de 2022."
+  },
+  {
+    "id": "deft",
+    "name": "Deft",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ojWA-kflPiC7v5mIuc-IrKezcuKPFNF0qEB8ONKKsVSVe00aSi1MgHsDJrVmkgmy34rxAObFRnmQ01ujzQVD1A",
+    "team": "DRX",
+    "role": "ADC",
+    "kda": "4.3",
+    "bio": "Campeão Mundial de 2022."
+  }
+]
