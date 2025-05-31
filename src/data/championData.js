@@ -24,7 +24,7 @@ export const detailedRolesData = {
         name: 'MID',
         image: require('../assets/roles/mid.png'), // <-- VOLTOU PARA ../assets/
         description: 'Campeões de dano mágico ou assassinos dominam o Mid.',
-        champions: [ { id: 'Ahri', name: 'Ahri', winRate: fakeWinRate() }, { id: 'Yasuo', name: 'Yasuo', winRate: fakeWinRate() }, { id: 'Zed', name: 'Zed', winRate: fakeWinRate() }, { id: 'LeBlanc', name: 'LeBlanc', winRate: fakeWinRate() }, { id: 'Orianna', name: 'Orianna', winRate: fakeWinRate() }, { id: 'Viktor', name: 'Viktor', winRate: fakeWinRate() }, { id: 'Syndra', name: 'Syndra', winRate: fakeWinRate() }, { id: 'Akali', name: 'Akali', winRate: fakeWinRate() }, { id: 'Katarina', name: 'Katarina', winRate: fakeWinRate() }, { id: 'Anivia', name: 'Anivia', winRate: fakeWinRate() } ],
+        champions: [ { id: 'Ahri', name: 'Ahri', winRate: fakeWinRate() }, { id: 'Yasuo', name: 'Yasuo', winRate: fakeWinRate() }, { id: 'Zed', name: 'Zed', winRate: fakeWinRate() }, { id: 'Seraphine', name: 'Seraphine', winRate: fakeWinRate() }, { id: 'Orianna', name: 'Orianna', winRate: fakeWinRate() }, { id: 'Viktor', name: 'Viktor', winRate: fakeWinRate() }, { id: 'Syndra', name: 'Syndra', winRate: fakeWinRate() }, { id: 'Akali', name: 'Akali', winRate: fakeWinRate() }, { id: 'Katarina', name: 'Katarina', winRate: fakeWinRate() }, { id: 'Anivia', name: 'Anivia', winRate: fakeWinRate() } ],
     },
     ADC: {
         name: 'ADC',
