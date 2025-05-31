@@ -2,10 +2,10 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import HomeScreen from './screens/HomeScreen';
-import UpdatesScreen from './screens/UpdatesScreen';
-import ChampionsScreen from './screens/ChampionsScreen';
-import ChampionDetailScreen from './screens/ChampionDetailScreen'; // 1. Importe a nova tela
+import HomeScreen from '../src/screens/HomeScreen';
+import UpdatesScreen from '../src/screens/UpdatesScreen';
+import ChampionsScreen from '../src/screens/ChampionsScreen';
+import ChampionDetailScreen from '../src/screens/ChampionDetailScreen'; // 1. Importe a nova tela
 
 const Stack = createNativeStackNavigator();
 

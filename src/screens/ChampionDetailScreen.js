@@ -1,29 +1,26 @@
 // screens/ChampionDetailScreen.js
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useLayoutEffect } from 'react'; // Removido useState e useEffect daqui
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import useChampionDetails from '../src/hooks/useChampionDetails'; // <<< 1. IMPORTE O CUSTOM HOOK
 
-const DDRAGON_BASE_URL = 'https://ddragon.leagueoflegends.com';
-const LANGUAGE = 'pt_BR'; // Você pode mudar para 'en_US' ou outra língua suportada
+const DDRAGON_BASE_URL = 'https://ddragon.leagueoflegends.com'; // Pode manter se for usar para construir URLs de imagem diretamente aqui
 
-// Para pegar a largura da tela para a Splash Art
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function ChampionDetailScreen() {
     const navigation = useNavigation();
     const route = useRoute();
-    // initialChampionData contém o ID e nome básico passado da tela anterior
-    const { championData: initialChampionData } = route.params;
+    const { championData: initialChampionData } = route.params; // Contém o ID do campeão
 
-    const [championDetails, setChampionDetails] = useState(null);
-    const [latestVersion, setLatestVersion] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    //                                championId (ex: 'Aatrox')
+    //                                     vvvvvvvvvvvvvvvvvvvvvvvv
+    const { championDetails, loading, error, latestVersion } = useChampionDetails(initialChampionData.id); // <<< 2. USE O HOOK
 
-    // Configura o header da tela
     useLayoutEffect(() => {
         navigation.setOptions({
+            // Usa championDetails do hook se disponível, senão o nome inicial
             title: championDetails ? championDetails.name : initialChampionData.name,
             headerShown: true,
             headerStyle: { backgroundColor: '#18181C' },
@@ -37,64 +34,7 @@ export default function ChampionDetailScreen() {
         });
     }, [navigation, initialChampionData.name, championDetails]);
 
-    // 1. Busca a versão mais recente do Data Dragon
-    useEffect(() => {
-        const fetchVersion = async () => {
-            try {
-                const response = await fetch(`${DDRAGON_BASE_URL}/api/versions.json`);
-                if (!response.ok) throw new Error('Falha ao buscar versões do DDragon.');
-                const versions = await response.json();
-                if (versions.length > 0) {
-                    setLatestVersion(versions[0]); // Pega a versão mais recente
-                } else {
-                    throw new Error('Nenhuma versão encontrada.');
-                }
-            } catch (e) {
-                console.error("Erro buscando versão DDragon:", e);
-                setError(e.message);
-                // Defina uma versão de fallback se a API falhar, por exemplo:
-                // setLatestVersion('14.10.1'); // Verifique a última versão manualmente como fallback
-                setLoading(false); // Para de carregar se não conseguir a versão
-            }
-        };
-        fetchVersion();
-    }, []);
 
-    // 2. Busca os detalhes do campeão quando a versão e o ID estiverem disponíveis
-    useEffect(() => {
-        if (!latestVersion || !initialChampionData.id) {
-            if (latestVersion && !initialChampionData.id) { // Se tem versão mas não ID
-                setError("ID do campeão não fornecido.");
-                setLoading(false);
-            }
-            return; // Não faz nada se não tiver versão ou ID do campeão
-        }
-
-        const fetchChampionDetails = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                // O ID do campeão deve ser o 'key' usado pelo DDragon (ex: Aatrox, MonkeyKing para Wukong)
-                const championId = initialChampionData.id;
-                const response = await fetch(`${DDRAGON_BASE_URL}/cdn/${latestVersion}/data/${LANGUAGE}/champion/${championId}.json`);
-                
-                if (!response.ok) {
-                    throw new Error(`Falha ao buscar dados para ${championId} (Status: ${response.status})`);
-                }
-                const jsonResponse = await response.json();
-                setChampionDetails(jsonResponse.data[championId]);
-            } catch (e) {
-                console.error("Erro buscando detalhes do campeão:", e);
-                setError(e.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchChampionDetails();
-    }, [latestVersion, initialChampionData.id]); // Re-executa se a versão ou ID mudar
-
-    // Renderiza o estado de carregamento
     if (loading) {
         return (
             <View style={styles.centered}>
@@ -104,7 +44,6 @@ export default function ChampionDetailScreen() {
         );
     }
 
-    // Renderiza o estado de erro
     if (error) {
         return (
             <View style={styles.centered}>
@@ -116,8 +55,8 @@ export default function ChampionDetailScreen() {
         );
     }
 
-    // Renderiza se não houver detalhes do campeão (pouco provável se não houve erro)
     if (!championDetails) {
+        // Este estado pode acontecer brevemente ou se houver um erro não capturado
         return (
             <View style={styles.centered}>
                 <Text style={styles.errorText}>Detalhes do campeão não encontrados.</Text>
@@ -128,7 +67,7 @@ export default function ChampionDetailScreen() {
         );
     }
 
-    // URL da Splash Art (skin padrão)
+    // Construção de URLs de imagem (pode usar 'latestVersion' do hook)
     const splashArtUrl = `${DDRAGON_BASE_URL}/cdn/img/champion/splash/${championDetails.id}_0.jpg`;
     const passiveImageUrl = `${DDRAGON_BASE_URL}/cdn/${latestVersion}/img/passive/${championDetails.passive.image.full}`;
 
@@ -155,7 +94,6 @@ export default function ChampionDetailScreen() {
 
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Habilidades</Text>
-                {/* Passiva */}
                 <View style={styles.skillItem}>
                     <Image 
                         source={{ uri: passiveImageUrl }} 
@@ -166,10 +104,9 @@ export default function ChampionDetailScreen() {
                         <Text style={styles.skillDescription}>{championDetails.passive.description.replace(/<[^>]+>/g, '')}</Text>
                     </View>
                 </View>
-                {/* Habilidades Q, W, E, R */}
                 {championDetails.spells.map((spell, index) => {
                     const skillKey = ['Q', 'W', 'E', 'R'][index];
-                    const spellImageUrl = `${DDRAGON_BASE_URL}/cdn/${latestVersion}/img/spell/${spell.image.full}`;
+                    const spellImageUrl = `${DDRAGON_BASE_URL}/cdn/${latestVersion}/img/spell/${spell.image.full}`; // Usa latestVersion do hook
                     return (
                         <View key={spell.id} style={styles.skillItem}>
                             <Image 
@@ -193,12 +130,14 @@ export default function ChampionDetailScreen() {
                     ou adicionar manualmente esses dados.
                 </Text>
             </View>
-
         </ScrollView>
     );
 }
 
+// Seus estilos permanecem os mesmos
 const styles = StyleSheet.create({
+    // ... (copie os estilos da sua tela ChampionDetailScreen aqui)
+    // ... (coloquei os estilos relevantes abaixo para referência) ...
     container: {
         flex: 1,
         backgroundColor: '#18181C',
@@ -228,15 +167,15 @@ const styles = StyleSheet.create({
     },
     splashImage: {
         width: screenWidth,
-        height: screenWidth * 0.58, // Proporção comum para splash arts (aprox. 16:9 ou similar)
+        height: screenWidth * 0.58, 
         resizeMode: 'cover',
     },
     headerContent: {
         padding: 15,
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.3)', // Sobreposição para melhor leitura do texto na splash
-        marginTop: -80, // Puxa para cima da splash (ajuste conforme necessário)
-        paddingTop: 20, // Espaço para não colar no topo da área de texto
+        backgroundColor: 'rgba(0,0,0,0.3)', 
+        marginTop: -80, 
+        paddingTop: 20, 
     },
     championName: {
         fontSize: 28,
@@ -253,10 +192,10 @@ const styles = StyleSheet.create({
         textShadowColor: 'rgba(0, 0, 0, 0.75)',
         textShadowOffset: {width: -1, height: 1},
         textShadowRadius: 10,
-        marginBottom: 10, // Espaço antes da lore
+        marginBottom: 10,
     },
     section: {
-        marginTop: 20, // Espaço após o headerContent ou seção anterior
+        marginTop: 20, 
         paddingHorizontal: 20,
         paddingBottom: 15,
         borderBottomWidth: 1,
@@ -276,7 +215,7 @@ const styles = StyleSheet.create({
     skillItem: {
         flexDirection: 'row',
         marginBottom: 15,
-        alignItems: 'flex-start', // Alinha imagem e texto no topo
+        alignItems: 'flex-start', 
     },
     skillImage: {
         width: 50,
@@ -287,7 +226,7 @@ const styles = StyleSheet.create({
         borderColor: '#00d9ff',
     },
     skillTextContainer: {
-        flex: 1, // Para o texto ocupar o espaço restante
+        flex: 1, 
     },
     skillName: {
         fontSize: 17,
