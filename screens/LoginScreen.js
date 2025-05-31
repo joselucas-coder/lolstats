@@ -1,41 +1,35 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, StyleSheet, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
-
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
-import { useEffect } from 'react';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import Constants from 'expo-constants';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen({ navigation }) {
-  WebBrowser.maybeCompleteAuthSession();
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    expoClientId: '1056193214215-4uegt7esptiu7bude5dsjd7bed90ngqv.apps.googleusercontent.com',
+    androidClientId: 'SEU_ANDROID_CLIENT_ID',
+    iosClientId: 'SEU_IOS_CLIENT_ID',
+  });
 
-const [request, response, promptAsync] = Google.useAuthRequest({
-  expoClientId: '1056193214215-4uegt7esptiu7bude5dsjd7bed90ngqv.apps.googleusercontent.com',
-  androidClientId: 'SEU_ANDROID_CLIENT_ID',
-  iosClientId: 'SEU_IOS_CLIENT_ID',
-});
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { id_token } = response.params;
+      const credential = GoogleAuthProvider.credential(id_token);
+      signInWithCredential(auth, credential)
+        .then(() => console.log('Login com Google feito!'))
+        .catch((error) => console.error('Erro ao logar com Google:', error));
+    }
+  }, [response]);
 
-useEffect(() => {
-  if (response?.type === 'success') {
-    const { id_token } = response.params;
-    const credential = GoogleAuthProvider.credential(id_token);
-    signInWithCredential(auth, credential)
-      .then(() => {
-        console.log('Login com Google feito!');
-      })
-      .catch((error) => {
-        console.error('Erro ao logar com Google:', error);
-      });
-  }
-}, [response]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false); // Para alternar entre login e cadastro
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const handleLogin = async () => {
     try {
@@ -60,12 +54,16 @@ useEffect(() => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{isRegistering ? 'Cadastre-se' : 'Entre na sua conta'}</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <Text style={styles.title}>{isRegistering ? 'Criar Conta' : 'Entrar'}</Text>
 
       {isRegistering && (
         <TextInput
           placeholder="Nome"
+          placeholderTextColor="#aaa"
           value={name}
           onChangeText={setName}
           style={styles.input}
@@ -74,6 +72,7 @@ useEffect(() => {
 
       <TextInput
         placeholder="Email"
+        placeholderTextColor="#aaa"
         value={email}
         onChangeText={setEmail}
         style={styles.input}
@@ -82,6 +81,7 @@ useEffect(() => {
       />
       <TextInput
         placeholder="Senha"
+        placeholderTextColor="#aaa"
         value={password}
         onChangeText={setPassword}
         style={styles.input}
@@ -90,6 +90,7 @@ useEffect(() => {
       {isRegistering && (
         <TextInput
           placeholder="Confirmar Senha"
+          placeholderTextColor="#aaa"
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           style={styles.input}
@@ -97,31 +98,75 @@ useEffect(() => {
         />
       )}
 
-      <Button title={isRegistering ? 'Cadastrar' : 'Entrar'} onPress={isRegistering ? handleRegister : handleLogin} />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={isRegistering ? handleRegister : handleLogin}
+      >
+        <Text style={styles.buttonText}>{isRegistering ? 'Cadastrar' : 'Entrar'}</Text>
+      </TouchableOpacity>
 
-      <View style={{ marginVertical: 10 }}>
-        <Button
-        title="Entrar com Google"
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: '#DB4437' }]}
         onPress={() => promptAsync()}
         disabled={!request}
-        color="#DB4437"
-        />
-        </View>
-
+      >
+        <Text style={styles.buttonText}>Entrar com Google</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity onPress={() => setIsRegistering(!isRegistering)}>
-        <Text style={styles.link}>{isRegistering ? 'Já tem uma conta? Entre' : 'Não tem uma conta? Cadastre-se'}</Text>
+        <Text style={styles.toggleText}>
+          {isRegistering ? 'Já tem uma conta? Entrar' : 'Não tem conta? Cadastrar-se'}
+        </Text>
       </TouchableOpacity>
-    </View>
-
-    
-    
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20 },
-  input: { height: 40, borderBottomWidth: 1, marginBottom: 12 },
-  link: { marginTop: 16, color: 'blue', textAlign: 'center' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
+  container: {
+    flex: 1,
+    backgroundColor: '#0A0A0F',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#E0E0E0',
+    textAlign: 'center',
+    marginBottom: 32,
+  },
+  input: {
+    height: 50,
+    backgroundColor: '#1A1A24',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    color: '#fff',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  button: {
+    backgroundColor: '#5C2ECC',
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginBottom: 16,
+    alignItems: 'center',
+    shadowColor: '#5C2ECC',
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  toggleText: {
+    marginTop: 20,
+    textAlign: 'center',
+    color: '#888',
+    fontSize: 14,
+  },
 });

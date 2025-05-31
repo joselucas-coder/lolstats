@@ -1,153 +1,118 @@
-// App.js
+// App.js (CORRIGIDO e COM TELA DE CONFIGURAÇÕES)
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Image, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons'; // Mantido como você tem
 import { onAuthStateChanged } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 
 import { auth } from './firebaseConfig';
 import AuthStack from './AuthStack';
+import MainTabs from './MainTabs';
 
-// Telas
-import HomeScreen from './screens/HomeScreen';
-import ChampionsScreen from './screens/ChampionsScreen';
-import NotificationScreen from './screens/NotificationsScreen';
-import SearchScreen from './screens/SearchScreen';
-import EsportsScreen from './screens/EsportsScreen';
+// Telas (Importe as usadas DIRETAMENTE no Drawer)
 import ProfileScreen from './screens/ProfileScreen';
-import LoginScreen from './screens/LoginScreen';
+import ConfiguracaoScreen from './screens/ConfiguracaoScreen'; // <<< 1. IMPORTE A TELA AQUI
 
-const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 // 🔹 Componente: Imagem do Perfil no topo
 function HeaderProfileImage() {
-  const navigation = useNavigation();
-  const imageUrl = auth.currentUser?.photoURL || 'https://wallpapers.com/images/hd/meme-profile-picture-2rhxt0ddudotto63.jpg';
+    const navigation = useNavigation();
+    const imageUrl = auth.currentUser?.photoURL || 'https://wallpapers.com/images/hd/meme-profile-picture-2rhxt0ddudotto63.jpg';
 
-  return (
-    <TouchableOpacity onPress={() => navigation.openDrawer()}>
-      <Image
-        source={{ uri: imageUrl }}
-        style={{
-          width: 35,
-          height: 35,
-          borderRadius: 50,
-          marginLeft: 15,
-        }}
-      />
-    </TouchableOpacity>
-  );
-}
-
-// 🔹 Tabs (conteúdo principal)
-function MainTabs() {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: 'white',
-        tabBarInactiveTintColor: 'gray',
-        tabBarStyle: {
-          backgroundColor: '#000000',
-          borderTopWidth: 0,
-          elevation: 0,
-          shadowOpacity: 0,
-          paddingTop: 10,
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          height: 65,
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderRadius: 15,
-          borderBottomLeftRadius: 0,
-          borderBottomRightRadius: 0,
-        },
-        tabBarIcon: ({ color, size }) => {
-          let iconName = 'home';
-          if (route.name === 'Home') iconName = 'home';
-          if (route.name === 'Pesquisa') iconName = 'search';
-          if (route.name === 'notificação') iconName = 'notifications-outline';
-          if (route.name === 'Perfil') iconName = 'person';
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-      })}
-    >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Pesquisa" component={SearchScreen} />
-      <Tab.Screen
-        name="MeuTab"
-        component={EsportsScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
+    return (
+        <TouchableOpacity onPress={() => navigation.openDrawer()}>
             <Image
-              source={require('./assets/esportslol.png')}
-              style={{
-                width: 35,
-                height: 40,
-                tintColor: focused ? '#fff' : '#888',
-              }}
+                source={{ uri: imageUrl }}
+                style={{ width: 35, height: 35, borderRadius: 50, marginLeft: 15 }}
             />
-          ),
-        }}
-      />
-      <Tab.Screen name="notificação" component={NotificationScreen} />
-    </Tab.Navigator>
-  );
+        </TouchableOpacity>
+    );
 }
 
 export default function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+            setLoading(false);
+        });
+        return () => unsubscribe();
+    }, []);
 
-    return () => unsubscribe();
-  }, []);
+    if (loading) return null;
 
-  if (loading) return null;
+    // Função para o botão de voltar no ProfileScreen dentro do Drawer
+    const DrawerBackButton = () => {
+        const navigation = useNavigation();
+        return (
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginLeft: 15 }}>
+                <Ionicons name="arrow-back" size={24} color={'#fff'} />
+            </TouchableOpacity>
+        );
+    };
 
-  return (
-    <NavigationContainer>
-      {user ? (
-        <Drawer.Navigator
-          screenOptions={{
-            headerStyle: { backgroundColor: '#000' },
-            headerTintColor: '#fff',
-            headerTitleAlign: 'center',
-            drawerStyle: {
-              backgroundColor: '#111',
-              width: 240,
-            },
-            drawerLabelStyle: {
-              color: '#fff',
-            },
-            headerLeft: () => <HeaderProfileImage />,
-          }}
-        >
-          <Drawer.Screen
-            name="Início"
-            component={MainTabs}
-            options={{ title: 'Página Inicial',}}
-          />
-          <Drawer.Screen
-            name="perfil"
-            component={ProfileScreen}
-            options={{ title: 'Perfil',}}
-          />
-        </Drawer.Navigator>
-      ) : (
-        <AuthStack />
-      )}
-    </NavigationContainer>
-  );
+
+    return (
+        <NavigationContainer>
+            {user ? (
+                <Drawer.Navigator
+                    screenOptions={{
+                        headerStyle: { backgroundColor: '#000' },
+                        headerTintColor: '#fff',
+                        headerTitleAlign: 'center',
+                        drawerStyle: { backgroundColor: '#111', width: 240 },
+                        drawerLabelStyle: { color: '#fff' },
+                        headerLeft: () => <HeaderProfileImage />,
+                        drawerActiveTintColor: '#00d9ff', // Cor para o item ativo (opcional)
+                        drawerInactiveTintColor: '#fff', // Cor para itens inativos
+                    }}
+                >
+                    <Drawer.Screen
+                        name="_"
+                        component={MainTabs}
+                        options={{
+                            title: 'Página Inicial',
+                            drawerIcon: ({ color, size }) => ( // Ícone opcional para Home
+                                <Ionicons name="home-outline" size={size} color={color} />
+                            ),
+                         }}
+                    />
+                    <Drawer.Screen
+                        name="perfil"
+                        component={ProfileScreen}
+                        options={{
+                            title: 'Perfil',
+                            gestureEnabled: false,
+                            swipeEnabled: false,
+                            headerLeft: () => <DrawerBackButton />,
+                            drawerIcon: ({ color, size }) => ( // Ícone para Perfil
+                                <Ionicons name="person-outline" size={size} color={color} />
+                            ),
+                        }}
+                    />
+
+                    {/* --- 👇👇👇 2. ADICIONE A TELA DE CONFIGURAÇÕES AQUI 👇👇👇 --- */}
+                    <Drawer.Screen
+                        name="Configuracoes"
+                        component={ConfiguracaoScreen}
+                        options={{
+                            title: 'Configurações', // Texto no Drawer
+                            drawerIcon: ({ color, size }) => ( // Ícone de engrenagem
+                                <Ionicons name="settings-outline" size={size} color={color} />
+                            ),
+                        }}
+                    />
+                    {/* --- 👆👆👆 FIM DA ADIÇÃO 👆👆👆 --- */}
+
+                </Drawer.Navigator>
+            ) : (
+                <AuthStack />
+            )}
+        </NavigationContainer>
+    );
 }

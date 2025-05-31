@@ -154,7 +154,7 @@ export default function SearchScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container1} edges={['top']}>
+    <View style={styles.container1}>
 
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.containerInput}>
@@ -187,7 +187,7 @@ export default function SearchScreen() {
           />
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -196,29 +196,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 17,
-    marginTop: 30,
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  welcomeText: {
-    fontSize: 14,
-    color: '#aaa',
-  },
-  profileImage: {
-    width: 45,
-    height: 45,
-    borderRadius: 50,
-  },
+
   container: {
-    marginTop: 30,
+
     flexGrow: 1,
     backgroundColor: '#2B2B33',
     borderTopLeftRadius: 40,

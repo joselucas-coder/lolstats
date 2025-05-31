@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import playersData from '../assets/data/players.json';
+import playersData from '../data/players.json';
 
 export const getPlayerList = async () => {
   return playersData; // Simula resposta de API

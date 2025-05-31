@@ -1,302 +1,138 @@
-import React, { useState, useEffect } from 'react';
+// screens/HomeScreen.js (MODIFICADO)
+
+import React from 'react'; // Removidos useState e useEffect
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Modal,
-  Pressable,
-  ScrollView,
+    View, Text, StyleSheet, TouchableOpacity, Image,
+    ScrollView, ImageBackground // Removidos Modal, Pressable, ActivityIndicator, Dimensions
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { auth } from '../firebaseConfig'; // Importar auth do firebase
+// import { auth } from '../firebaseConfig'; // Removido, a menos que use para outra coisa
+import { LinearGradient } from 'expo-linear-gradient';
+import { detailedRolesData as importedRolesData } from '../data/championData'; // <-- IMPORTA OS DADOS
 
-const roles = [
-  {
-    name: 'TOP',
-    image: require('../assets/roles/top.png'),
-  },
-  {
-    name: 'JUNGLE',
-    image: require('../assets/roles/jungle.png'),
-  },
-  {
-    name: 'MID',
-    image: require('../assets/roles/mid.png'),
-  },
-  {
-    name: 'ADC',
-    image: require('../assets/roles/adc.png'),
-  },
-  {
-    name: 'SUP',
-    image: require('../assets/roles/sup.png'),
-  },
-];
+const patchVersion = '14.10'; // Mantido apenas se usar em 'UpdatesScreen' link
 
+// Usa os dados importados
+const roles = Object.values(importedRolesData);
+
+// --- COMPONENTE PRINCIPAL ---
 export default function HomeScreen() {
-  const [selectedRole, setSelectedRole] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [user, setUser] = useState(null); // Estado para armazenar o usuário logado
-  const navigation = useNavigation();
+    const navigation = useNavigation();
 
-  const openModal = (role) => {
-    setSelectedRole(role);
-    setModalVisible(true);
-  };
+    // REMOVIDO: Todos os useState e useEffect relacionados a modais e API.
+    // REMOVIDO: Todas as funções open/closeModal e find/get Rune/Champion.
 
-  const closeModal = () => {
-    setSelectedRole(null);
-    setModalVisible(false);
-  };
+    // --- FUNÇÃO DE NAVEGAÇÃO ---
+    const navigateToChampions = (roleName) => {
+        navigation.navigate('ChampionsScreen', { roleName: roleName });
+    };
 
-  
+    // REMOVIDO: Checagem de 'loading'.
 
-  // Monitorando o estado de autenticação
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user); // Armazena o usuário logado
-    });
+    return (
+        <View style={styles.container}>
 
-    return () => unsubscribe(); // Desinscreve-se ao desmontar o componente
-  }, []); // O array vazio garante que o hook seja chamado apenas uma vez
+            {/* --- MODAIS REMOVIDOS --- */}
 
-  return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      {/* Modal */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={closeModal}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{selectedRole}</Text>
-            <Text style={styles.modalText}>Detalhes sobre a função {selectedRole}...</Text>
-            <Pressable style={styles.closeButton} onPress={closeModal}>
-              <Text style={styles.closeButtonText}>Fechar</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+            {/* --- CONTEÚDO PRINCIPAL DA TELA --- */}
+            <View style={styles.containerConteudo}>
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.mainScrollContent}>
+                    <View style={styles.contentWrapper}>
 
-      <View style={styles.containerConteudo}>
-        <View style={styles.contentWrapper}>
-          {/* Partida da Semana */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Partida da Semana:</Text>
-            <Text style={styles.cardText1}>Loud vs Pain</Text>
-          </View>
+                        {/* CARD "PARTIDA DA SEMANA" - Mantido */}
+                        <View style={styles.matchOfTheWeekCard}>
+                           <View style={[styles.playerCardHalf, styles.playerCardHalfLeft]}>
+                                <Image source={{ uri: 'https://liquipedia.net/commons/images/thumb/8/8b/LOUD_allmode.png/900px-LOUD_allmode.png' }} style={styles.teamLogoImage} resizeMode="contain" />
+                                <LinearGradient colors={['rgba(0, 170, 84, 0.0)', 'rgba(0, 170, 84, 0.0)', 'rgba(0, 170, 84, 0.6)']} style={[styles.cornerGradient, styles.bottomLeftGradient]} start={{ x: 0.7, y: 0 }} end={{ x: 0.2, y: 1 }} />
+                            </View>
+                            <View style={[styles.playerCardHalf, styles.playerCardHalfRight]}>
+                                 <Image source={{ uri: 'https://liquipedia.net/commons/images/thumb/6/6d/PaiN_Gaming_2017_darkmode.png/900px-PaiN_Gaming_2017_darkmode.png' }} style={styles.teamLogoImage} resizeMode="contain" />
+                                <LinearGradient colors={['rgba(237, 27, 36, 0.0)', 'rgba(237, 27, 36, 0.0)', 'rgba(237, 27, 36, 0.6)']} style={[styles.cornerGradient, styles.bottomRightGradient]} start={{ x: 0.3, y: 0 }} end={{ x: 0.8, y: 1 }} />
+                            </View>
+                            <View style={styles.matchTextOverlay}>
+                                <Text style={styles.matchCardTitle}>Partida da Semana:</Text>
+                                <Text style={styles.matchCardVsText}>LOUD vs paiN</Text>
+                            </View>
+                        </View>
 
-          {/* Últimas Atualizações */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Últimas Atualizações</Text>
-            <TouchableOpacity>
-              <Text style={styles.viewMore}>Ver Mais</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.updateCard}>
-            <Text style={styles.cardText}>
-              Patch 14.9: buffs no Teemo, nerfs no K’Sante
-            </Text>
-          </View>
+                        {/* CARD "ÚLTIMAS ATUALIZAÇÕES" - Mantido */}
+                        <View style={styles.section}><Text style={styles.sectionTitle}>Últimas Atualizações</Text></View>
+                        <TouchableOpacity onPress={() => navigation.navigate('UpdatesScreen')}>
+                            <ImageBackground source={{ uri: 'https://preview.redd.it/spirit-blossom-irelia-splash-art-v0-vyi36bf6bzue1.jpeg?width=1080&crop=smart&auto=webp&s=7354b31b966ee1171746e46ba0a09c7b56babc24' }} style={styles.updateCard} imageStyle={{ borderRadius: 20 }} resizeMode="cover">
+                                <LinearGradient colors={['rgba(148, 0, 211, 0.15)', 'rgba(255, 255, 255, 0.10)', 'rgba(148, 0, 211, 0.15)']} style={styles.gradientOverlay} />
+                                <Text style={styles.updateCardTitle}>Patch {patchVersion}: Novidades!</Text>
+                                <Text style={styles.updateCardSubtitle}>Clique para saber mais</Text>
+                            </ImageBackground>
+                        </TouchableOpacity>
 
-          {/* Campeões */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Campeões</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('ChampionsScreen')}>
-              <Text style={styles.viewMore}>Ver Tudo</Text>
-            </TouchableOpacity>
-          </View>
+                        {/* SEÇÃO CAMPEÕES - MODIFICADA */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Campeões</Text>
+                            {/* --- BOTÃO VER TUDO MODIFICADO --- */}
+                            <TouchableOpacity onPress={() => navigateToChampions('ALL')}>
+                                <Text style={styles.viewMore}>Ver Tudo</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.rolesContainer}>
+                            {/* --- BOTÕES DE ROLE MODIFICADOS --- */}
+                            {roles.map((role) => (
+                                <TouchableOpacity
+                                    key={role.name}
+                                    style={styles.roleButton}
+                                    onPress={() => navigateToChampions(role.name)} // <--- AQUI A MUDANÇA
+                                >
+                                    {/* Agora usa a imagem vinda dos dados importados */}
+                                    <Image source={role.image} style={{ width: 50, height: 50 }} />
+                                    <Text style={styles.roleText}>{role.name}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.rolesContainer}
-          >
-            {roles.map((role) => (
-              <TouchableOpacity
-                key={role.name}
-                style={styles.roleButton}
-                onPress={() => openModal(role.name)}
-              >
-                <Image source={role.image} style={{ width: 50, height: 50 }} />
-                <Text style={styles.roleText}>{role.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          {/* Esports */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Esports</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('EsportsScreen')}>
-              <Text style={styles.viewMore}>Ver Mais</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Resultados */}
-          <View style={styles.matchRow}>
-            <View style={styles.matchCard}>
-              <Text style={styles.cardText}>0 - 3</Text>
-              <Text style={styles.cardText}>VKS</Text>
+                        {/* SEÇÃO ESPORTS - Mantida */}
+                        <View style={styles.section}><Text style={styles.sectionTitle}>Esports</Text><TouchableOpacity onPress={() => navigation.navigate('EsportsScreen')}><Text style={styles.viewMore}>Ver Mais</Text></TouchableOpacity></View>
+                         <View style={styles.matchRow}>
+                             <View style={styles.matchCard}><View style={styles.matchColumn}><Image source={{ uri: 'https://liquipedia.net/commons/images/thumb/8/8b/LOUD_allmode.png/900px-LOUD_allmode.png' }} style={styles.teamLogo} /><Text style={styles.teamName}>LOUD</Text></View><Text style={styles.matchScoreText}>0 - 3</Text><View style={styles.matchColumn}><Image source={{ uri: 'https://liquipedia.net/commons/images/thumb/3/3b/Red_Canids_allmode.png/900px-Red_Canids_allmode.png' }} style={styles.teamLogo} /><Text style={styles.teamName}>RED</Text></View></View>
+                            <View style={styles.matchCard}><View style={styles.matchColumn}><Image source={{ uri: 'https://liquipedia.net/commons/images/thumb/6/6d/PaiN_Gaming_2017_darkmode.png/900px-PaiN_Gaming_2017_darkmode.png' }} style={styles.teamLogo} /><Text style={styles.teamName}>PAIN</Text></View><Text style={styles.matchScoreText}>2 - 1</Text><View style={styles.matchColumn}><Image source={{ uri: 'https://liquipedia.net/commons/images/thumb/a/ad/FURIA_Esports_full_darkmode.png/900px-FURIA_Esports_full_darkmode.png' }} style={styles.teamLogo} /><Text style={styles.teamName}>FURIA</Text></View></View>
+                        </View>
+                    </View>
+                </ScrollView>
             </View>
-            <View style={styles.matchCard}>
-              <Text style={styles.cardText}>0 - 3</Text>
-              <Text style={styles.cardText}>DRX</Text>
-            </View>
-          </View>
         </View>
-      </View>
-    </SafeAreaView>
-  );
+    );
 }
 
+// --- ESTILOS (Mantidos, mas os de MODAL podem ser removidos) ---
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000000',
-  },
-  containerConteudo: {
-    flex: 1,
-    backgroundColor: '#2B2B33',
-    borderRadius: 40,
-    paddingTop: 30,
-    paddingHorizontal: 17,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-  },
-
-  contentWrapper:{
-    gap:12
-  },
-
-  profileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 10,
-    marginLeft: 20,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  profileName: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  profileRole: { color: '#ccc' },
-  card: {
-    backgroundColor: '#18181C',
-    padding: 20,
-    borderRadius: 20,
-    height: 160,
-  },
-  updateCard: {
-    backgroundColor: '#18181C',
-    padding: 15,
-    borderRadius: 20,
-    height: 130,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cardTitle: {
-    color: '#fff',
-    fontWeight: 'bold',
-    marginBottom: 5,
-    fontSize: 25,
-  },
-  cardText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: 'bold',
-  },
-  cardText1: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  section: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  sectionTitle: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-  viewMore: { color: 'white', fontSize: 12 },
-  rolesContainer: {
-    flexDirection: 'row',
-    gap: 25,
-  },
-  roleButton: {
-    backgroundColor: '#18181C',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    height: 100,
-    width: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  roleText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  matchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  matchCard: {
-    backgroundColor: '#18181C',
-    flex: 0.48,
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    height: 80,
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)',
-  },
-  modalContent: {
-    backgroundColor: '#121212',
-    padding: 25,
-    borderRadius: 20,
-    width: '95%',
-    height: '95%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modalTitle: {
-    fontSize: 20,
-    color: 'white',
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  modalText: {
-    fontSize: 14,
-    color: '#ccc',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  closeButton: {
-    backgroundColor: '#333',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  closeButtonText: {
-    color: 'white',
-  },
+    container: { flex: 1, backgroundColor: '#000' },
+    containerConteudo: { flex: 1, backgroundColor: '#2B2B33', borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingTop: 30, paddingHorizontal: 17 },
+    mainScrollContent: { paddingBottom: 100 },
+    contentWrapper: { gap: 12 },
+    updateCard: { height: 130, borderRadius: 20, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative', },
+    gradientOverlay: { ...StyleSheet.absoluteFillObject, borderRadius: 20, },
+    updateCardTitle: { color: '#FFFFFF', fontSize: 18, fontWeight: 'bold', textAlign: 'center', zIndex: 1, textShadowColor: 'rgba(0, 0, 0, 0.8)', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 5, },
+    updateCardSubtitle: { color: '#E0E0E0', fontSize: 13, marginTop: 8, zIndex: 1, textShadowColor: 'rgba(0, 0, 0, 0.7)', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 3, },
+    matchOfTheWeekCard: { height: 160, borderRadius: 20, flexDirection: 'row', backgroundColor: '#18181C', overflow: 'hidden', position: 'relative', },
+    playerCardHalf: { flex: 1, height: '100%', alignItems: 'center', justifyContent: 'center', position: 'relative', },
+    playerCardHalfLeft: {},
+    playerCardHalfRight: {},
+    teamLogoImage: { width: '65%', height: '65%', },
+    cornerGradient: { position: 'absolute', bottom: 0, width: '100%', height: '70%', zIndex: -1, },
+    bottomLeftGradient: { left: 0, },
+    bottomRightGradient: { right: 0, },
+    matchTextOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', padding: 10, zIndex: 2, },
+    matchCardTitle: { color: '#FFFFFF', fontSize: 20, fontWeight: 'bold', textAlign: 'center', textShadowColor: 'rgba(0, 0, 0, 0.85)', textShadowOffset: { width: 1, height: 2 }, textShadowRadius: 5, marginBottom: 5, },
+    matchCardVsText: { color: '#E8E8E8', fontSize: 18, fontWeight: 'bold', textAlign: 'center', textShadowColor: 'rgba(0, 0, 0, 0.85)', textShadowOffset: { width: 1, height: 2 }, textShadowRadius: 5, },
+    section: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
+    sectionTitle: { color: 'white', fontWeight: 'bold', fontSize: 20 },
+    viewMore: { color: 'white', fontSize: 12 },
+    rolesContainer: { flexDirection: 'row', gap: 25, paddingVertical: 10 },
+    roleButton: { backgroundColor: '#18181C', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 20, height: 100, width: 100, justifyContent: 'center', alignItems: 'center' },
+    roleText: { color: '#fff', fontWeight: 'bold', marginTop: 5 },
+    matchRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
+    matchCard: { backgroundColor: '#18181C', flex: 0.48, paddingVertical: 15, paddingHorizontal: 10, borderRadius: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    matchColumn: { alignItems: 'center' },
+    teamLogo: { width: 40, height: 40, marginBottom: 5, resizeMode: 'contain' },
+    teamName: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+    matchScoreText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+    // AQUI ESTAVAM OS ESTILOS DO MODAL - PODEM SER REMOVIDOS
 });
