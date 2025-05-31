@@ -1,9 +1,9 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import WelcomeScreen from '../src/screens/WelcomeScreen'; // nova tela
-import LoginScreen from '../src/screens/LoginScreen';
-import SignupScreen from '../src/screens/RegisterScreen';
+import WelcomeScreen from '../screens/WelcomeScreen'; // nova tela
+import LoginScreen from '../screens/LoginScreen';
+import SignupScreen from '../screens/RegisterScreen';
 
 
 const Stack = createNativeStackNavigator();

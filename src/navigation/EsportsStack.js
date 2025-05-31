@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import EsportsScreen from '../src/screens/EsportsScreen'; // Seu arquivo principal
-import NewsDetailScreen from '../src/screens/NewsDetailScreen'; // A nova tela
+import EsportsScreen from '../screens/EsportsScreen'; // Seu arquivo principal
+import NewsDetailScreen from '../screens/NewsDetailScreen'; // A nova tela
 
 const Stack = createNativeStackNavigator();
 

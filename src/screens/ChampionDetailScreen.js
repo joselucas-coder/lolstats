@@ -3,7 +3,7 @@ import React, { useLayoutEffect } from 'react'; // Removido useState e useEffect
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import useChampionDetails from '../src/hooks/useChampionDetails'; // <<< 1. IMPORTE O CUSTOM HOOK
+import useChampionDetails from '../hooks/useChampionDetails'; // <<< 1. IMPORTE O CUSTOM HOOK
 
 const DDRAGON_BASE_URL = 'https://ddragon.leagueoflegends.com'; // Pode manter se for usar para construir URLs de imagem diretamente aqui
 

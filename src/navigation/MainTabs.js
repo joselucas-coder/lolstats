@@ -5,10 +5,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'react-native';
 
 import HomeStack from './HomeStack';
-import SearchScreen from './src/screens/SearchScreen';
+import SearchScreen from '../screens/SearchScreen';
 // import EsportsScreen from './screens/EsportsScreen'; // <<< REMOVA ESTA LINHA
 import EsportsStack from './EsportsStack';           // <<< ADICIONE ESTA LINHA
-import NotificationScreen from './src/screens/NotificationsScreen';
+import NotificationScreen from '../screens/NotificationsScreen';
 // import ProfileScreen from './screens/ProfileScreen'; // <<< Você não está usando ProfileScreen nas abas, mas se precisar, mantenha
 
 const Tab = createBottomTabNavigator();
@@ -66,7 +66,7 @@ export default function MainTabs() {
         options={{
           tabBarIcon: ({ focused }) => (
             <Image
-              source={require('./assets/esportslol.png')}
+              source={require('../assets/teams/esportslol.png')}
               style={{
                 width: 40,
                 height: 45,

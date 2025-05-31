@@ -7,13 +7,13 @@ import { Ionicons } from '@expo/vector-icons'; // Mantido como você tem
 import { onAuthStateChanged } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 
-import { auth } from './firebaseConfig';
-import AuthStack from './AuthStack';
-import MainTabs from './MainTabs';
+import { auth } from './src/firebaseConfig';
+import AuthStack from './src/navigation/AuthStack';
+import MainTabs from './src/navigation/MainTabs';
 
 // Telas (Importe as usadas DIRETAMENTE no Drawer)
-import ProfileScreen from './screens/ProfileScreen';
-import ConfiguracaoScreen from './screens/ConfiguracaoScreen'; // <<< 1. IMPORTE A TELA AQUI
+import ProfileScreen from './src/screens/ProfileScreen';
+import ConfiguracaoScreen from './src/screens/ConfiguracaoScreen'; // <<< 1. IMPORTE A TELA AQUI
 
 const Drawer = createDrawerNavigator();
 
