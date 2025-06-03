@@ -5,7 +5,7 @@ import { Image } from 'react-native';
 
 import HomeStack from './HomeStack';
 import SearchScreen from '../screens/SearchScreen';
-import EsportsStack from './EsportsStack';           // <<< ADICIONE ESTA LINHA
+import EsportsStack from './EsportsStack';
 import NotificationScreen from '../screens/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
@@ -23,7 +23,7 @@ export default function MainTabs() {
           backgroundColor: '#000',
           borderTopWidth: 0,
           elevation: 0,
-          height: 60, 
+          height: 60,
           borderRadius: 20,
           position: 'absolute',
           borderBottomLeftRadius: 0,
@@ -39,17 +39,17 @@ export default function MainTabs() {
         },
       })}
     >
-      <Tab.Screen 
-        name="Home" 
+      <Tab.Screen
+        name="Home"
         component={HomeStack}
         options={{
             tabBarIcon: ({ color, focused }) => (
                 <Ionicons name={focused ? 'home' : 'home-outline'} size={NEW_ICON_SIZE} color={color} />
             ),
         }}
-      /> 
-      <Tab.Screen 
-        name="Pesquisa" 
+      />
+      <Tab.Screen
+        name="Pesquisa"
         component={SearchScreen}
         options={{
             tabBarIcon: ({ color }) => (
@@ -58,8 +58,8 @@ export default function MainTabs() {
         }}
       />
       <Tab.Screen
-        name="Esports" // <<< MUDEI O NOME AQUI (Opcional, mas recomendado)
-        component={EsportsStack} // <<< MUDEI O COMPONENTE AQUI (ESSENCIAL!)
+        name="Esports"
+        component={EsportsStack}
         options={{
           tabBarIcon: ({ focused }) => (
             <Image
@@ -73,17 +73,15 @@ export default function MainTabs() {
           ),
         }}
       />
-      <Tab.Screen 
-        name="notificação" 
-        component={NotificationScreen} 
+      <Tab.Screen
+        name="notificação"
+        component={NotificationScreen}
         options={{
             tabBarIcon: ({ color, focused }) => (
                 <Ionicons name={focused ? 'notifications' : 'notifications-outline'} size={NEW_ICON_SIZE} color={color} />
             ),
         }}
       />
-      {/* Se você precisar da tela de Perfil, adicione-a aqui */}
-      {/* <Tab.Screen name="Perfil" component={ProfileScreen} ... /> */}
     </Tab.Navigator>
   );
 }

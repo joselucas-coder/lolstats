@@ -1,14 +1,14 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import EsportsScreen from '../screens/EsportsScreen'; // Seu arquivo principal
-import NewsDetailScreen from '../screens/NewsDetailScreen'; // A nova tela
+import EsportsScreen from '../screens/EsportsScreen';
+import NewsDetailScreen from '../screens/NewsDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
 export default function EsportsStack() {
   return (
-    <Stack.Navigator 
-        screenOptions={{ 
-            headerShown: false, // Esconde o header padrão
+    <Stack.Navigator
+        screenOptions={{
+            headerShown: false,
         }}
     >
       <Stack.Screen name="EsportsList" component={EsportsScreen} />

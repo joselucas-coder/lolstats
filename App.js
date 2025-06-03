@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import {
     createDrawerNavigator,
-    DrawerContentScrollView, // Importado
-    DrawerItemList,         // Importado
-    DrawerItem              // Importado
+    DrawerContentScrollView,
+    DrawerItemList,
+    DrawerItem
 } from '@react-navigation/drawer';
 import { Image, TouchableOpacity, Text, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { onAuthStateChanged, signOut } from 'firebase/auth'; // signOut importado
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 
 import { auth } from './firebaseConfig';
@@ -55,16 +55,16 @@ function CustomDrawerContent(props) {
     };
 
     return (
-        <DrawerContentScrollView {...props} style={{ backgroundColor: '#111' /* Mantém o estilo do drawer */ }}>
+        <DrawerContentScrollView {...props} style={{ backgroundColor: '#111' }}>
             <DrawerItemList {...props} />
             <DrawerItem
                 label="Sair do App"
-                labelStyle={{ color: '#fff' }} // Estilo do texto
-                icon={({ color, size }) => ( // Ícone
-                    <Ionicons name="log-out-outline" size={size} color={'#fff'} /* Cor do ícone */ />
+                labelStyle={{ color: '#fff' }}
+                icon={({ color, size }) => (
+                    <Ionicons name="log-out-outline" size={size} color={'#fff'} />
                 )}
                 onPress={handleLogout}
-                inactiveTintColor="#fff" // Garante que a cor do ícone e texto seja branca quando inativo
+                inactiveTintColor="#fff"
             />
         </DrawerContentScrollView>
     );
@@ -125,7 +125,6 @@ export default function App() {
                             ),
                         }}
                     />
-                    {/* A TELA DE CONFIGURAÇÕES FOI REMOVIDA DAQUI */}
                 </Drawer.Navigator>
             ) : (
                 <AuthStack />

@@ -3,7 +3,7 @@ import axios from 'axios';
 import playersData from '../../data/players.json';
 
 export const getPlayerList = async () => {
-  return playersData; // Simula resposta de API
+  return playersData;
   
 };
 
@@ -20,7 +20,7 @@ export const getChampionList = async () => {
 
   const champions = Object.values(championsData).map((champion) => ({
     id: champion.id,
-    key: champion.key, // 👈 isso aqui é fundamental
+    key: champion.key, 
     name: champion.name,
     title: champion.title,
     tags: champion.tags,

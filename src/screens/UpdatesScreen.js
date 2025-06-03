@@ -54,23 +54,20 @@ const renderSkin = (skinName, imageUrl, chromas = []) => (
 );
 export default function UpdatesScreen() {
     const navigation = useNavigation();
-    const patchVersion = "14.10.1"; // Apenas para referência, se precisar
-    const imageUrlBeforeText = 'https://preview.redd.it/spirit-blossom-irelia-splash-art-v0-vyi36bf6bzue1.jpeg?width=1080&crop=smart&auto=webp&s=7354b31b966ee1171746e46ba0a09c7b56babc24'; // Substitua pela URL da sua imagem
+    const patchVersion = "14.10.1";
+    const imageUrlBeforeText = 'https://preview.redd.it/spirit-blossom-irelia-splash-art-v0-vyi36bf6bzue1.jpeg?width=1080&crop=smart&auto=webp&s=7354b31b966ee1171746e46ba0a09c7b56babc24';
 
 
     return (
         <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
 
-                {/* --- Título e Meta Informações --- */}
                 <Text style={styles.title}>Notas da Atualização 25.10</Text>
                 <Text style={styles.subtitle}>A Atualização 25.10 está escrita nas estrelas✨</Text>
                 <Text style={styles.meta}>Atualizações do jogo | Riot Sakaar | 13/05/2025</Text>
 
-                 {/* --- IMAGEM ANTES DO TEXTO PRINCIPAL --- */}
             {imageUrlBeforeText && <Image source={{ uri: imageUrlBeforeText }} style={styles.imageBeforeText}  />}
 
-                {/* --- Corpo da Notícia (Completo) --- */}
                 <Text style={styles.paragraph}>
                     A 2ª Temporada já está a todo vapor e trouxemos sua dose quinzenal de Notas da Atualização!
                 </Text>
@@ -112,9 +109,6 @@ export default function UpdatesScreen() {
                 <Text style={styles.heading}>Ganho de PdL em servidores da região SEA</Text>
                 <Text style={styles.paragraph}>Com a chegada da 2ª Temporada, queremos resolver o problema de dificuldade em alcançar determinados ranques nos servidores SEA depois da fusão concluída no início do ano. Apesar de estarmos contentes com o resultado geral da fusão e com os objetivos alcançados, os servidores não são todos iguais, então variáveis como número de jogadores, amplitude dos níveis de habilidade etc. acabaram impactando a escalada ranqueada em alguns deles. Então, analisando os dados de uma Temporada Ranqueada na íntegra, trouxemos alguns ajustes. E, como acabamos passando do ponto, trouxemos uma pequena reversão. Os ganhos de PdL nesta atualização serão melhores para os jogadores do servidor de Singapura depois do ajuste.</Text>
 
-                {/* --- TODO O CONTEÚDO DE CAMPEÕES, ITENS, RUNAS, ETC. FOI REMOVIDO DAQUI --- */}
-
-                {/* --- Botão Voltar --- */}
                 <View style={styles.buttonContainer}>
                     
                 </View>
@@ -126,9 +120,9 @@ export default function UpdatesScreen() {
 const styles = StyleSheet.create({
     imageBeforeText: {
         width: '100%',
-        height: 200, // Ajuste a altura conforme necessário
+        height: 200,
         marginBottom: 20,
-        borderRadius: 30, // Opcional: para bordas arredondadas
+        borderRadius: 30,
     },
     container: {
         flex: 1,
