@@ -1,4 +1,3 @@
-// src/hooks/useChampionDetails.js
 import { useState, useEffect } from 'react';
 
 const DDRAGON_BASE_URL = 'https://ddragon.leagueoflegends.com';
@@ -9,8 +8,6 @@ export default function useChampionDetails(championId) {
   const [latestVersion, setLatestVersion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // 1. Busca a versão mais recente do Data Dragon
   useEffect(() => {
     const fetchVersion = async () => {
       setLoading(true); // Inicia o carregamento ao buscar a versão
@@ -32,8 +29,6 @@ export default function useChampionDetails(championId) {
     };
     fetchVersion();
   }, []); // Executa apenas uma vez para pegar a versão
-
-  // 2. Busca os detalhes do campeão quando a versão e o ID estiverem disponíveis
   useEffect(() => {
     if (!latestVersion || !championId) {
       if (latestVersion && !championId && !loading) { // Se tem versão mas não ID, e não está já carregando
@@ -63,7 +58,5 @@ export default function useChampionDetails(championId) {
 
     fetchChampionDetails();
   }, [latestVersion, championId]); // Re-executa se a versão ou ID mudar
-
-  // Retorna os estados que o componente precisará
   return { championDetails, loading, error, latestVersion };
 }

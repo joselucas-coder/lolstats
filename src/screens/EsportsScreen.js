@@ -3,11 +3,10 @@ import {
     View, Text, Image, ScrollView, StyleSheet,
     TouchableOpacity, ImageBackground, Linking, Dimensions
 } from 'react-native';
-import { Table, Row } from 'react-native-table-component'; // Usamos Row, não Rows
+import { Table, Row } from 'react-native-table-component';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-// --- DADOS DAS LIGAS ---
 const leagues = [
     { name: 'LCK', image: require('../assets/leagues/lck.png') },
     { name: 'LTASul', image: require('../assets/leagues/ltasul.png') },
@@ -17,24 +16,15 @@ const leagues = [
     { name: 'Worlds', image: require('../assets/leagues/worlds.png') },
 ];
 
-// --- PLACEHOLDER IMAGES ---
-// Função para tentar carregar o logo, ou usar um default
 const getLogo = (path) => {
     try {
-        // Tenta carregar a imagem específica.
-        // OBS: O 'require' no React Native precisa ser estático.
-        // Esta abordagem dinâmica SÓ FUNCIONA se você tiver um sistema de build
-        // que entenda isso ou se você listar todas as 'requires' explicitamente.
-        // A forma mais segura é usar 'require' direto nos dados como abaixo.
-        // Usaremos require direto. Se der erro, o RN avisará.
         console.warn("Função getLogo é apenas um exemplo, usando require direto.");
-        return require('../assets/teams/red.png'); // Fallback
+        return require('../assets/teams/red.png');
     } catch (e) {
-        return require('../assets/teams/red.png'); // Fallback
+        return require('../assets/teams/red.png');
     }
 };
 
-// --- DADOS DE CONTEÚDO (COM LOGOS E FORMA) ---
 const leagueData = {
     LCK: {
   title: 'LCK - Korea',
@@ -71,11 +61,11 @@ const leagueData = {
       ['7', { name: 'FXW7', logo: require('../assets/teams/fluxo.png') }, '7', '1', '0', '6', 'N/A', '1', ['D', 'D', 'D', 'D', 'V']],
       ['8', { name: 'IE', logo: require('../assets/teams/isurus.png') }, '7', '1', '0', '6', 'N/A', '1', ['D', 'V', 'D', 'D', 'D']],
     ],
-    backgroundImage: require('../assets/leagues/ltasul.png'), // Placeholder path
+    backgroundImage: require('../assets/leagues/ltasul.png'),
   },
   highlight: {
     title: 'Destaque da Semana LTA-SUL!',
-    videoUrl: 'http://example.com/video_ltasul_highlight', // Placeholder URL
+    videoUrl: 'http://example.com/video_ltasul_highlight',
     
   },
   news: [{
@@ -86,17 +76,13 @@ const leagueData = {
    
   }],
 },
-    // Adicione os outros dados aqui (LTA Norte, Worlds, LEC, LPL) com logos e forma
-    // Usando um placeholder para os que faltam:
     'LTA Norte': { title: 'LTA - Norte', standingsTable: { head: ['Info'], data: [['Dados Indisponíveis']]}, highlight: { title: 'Sem Destaque', thumbnail: require('../assets/leagues/lck.png') }, news: [] },
     Worlds: { title: 'Worlds 2025', standingsTable: { head: ['Info'], data: [['Dados Indisponíveis']]}, highlight: { title: 'Sem Destaque', thumbnail: require('../assets/leagues/lck.png') }, news: [] },
     LEC: { title: 'LEC - Europe', standingsTable: { head: ['Info'], data: [['Dados Indisponíveis']]}, highlight: { title: 'Sem Destaque', thumbnail: require('../assets/leagues/lck.png') }, news: [] },
     LPL: { title: 'LPL - China', standingsTable: { head: ['Info'], data: [['Dados Indisponíveis']]}, highlight: { title: 'Sem Destaque', thumbnail: require('../assets/leagues/lck.png') }, news: [] },
 };
-// Garante dados padrão se algo faltar
 leagues.forEach(l => { if (!leagueData[l.name]) { leagueData[l.name] = { title: l.name, standingsTable: { head: ['Info'], data: [['Dados Indisponíveis']]}, highlight: { title: 'Sem Destaque', thumbnail: require('../assets/leagues/lck.png') }, news: [] }; } });
 
-// --- CÉLULAS CUSTOMIZADAS ---
 const TeamCell = ({ team }) => (
     <View style={styles.teamCell}>
         <Image source={team.logo} style={styles.teamLogo} />
@@ -117,7 +103,6 @@ const FormCell = ({ form }) => (
     </View>
 );
 
-// --- CONFIGURAÇÃO DA TABELA ---
 const widthArrLCK = [35, 160, 35, 35, 35, 35, 45, 35, 90];
 const widthArrLTA = [50, 160, 50, 50, 90];
 const widthArrWorlds = [80, 160, 50, 50, 90];
@@ -128,7 +113,6 @@ const getWidthArr = (head) => {
         if (head[0] === 'Grupo A') return widthArrWorlds;
         return widthArrLTA;
     }
-    // Fallback para tabelas com head 'Info'
     if (head.length === 1 && head[0] === 'Info') return [Dimensions.get('window').width - 80];
     return head.map(() => 80);
 };
@@ -146,7 +130,6 @@ const processRowData = (rowData, head) => {
     });
 };
 
-// --- COMPONENTE TableBlock ---
 const TableBlock = ({ tableData }) => {
     if (!tableData || !tableData.head || !tableData.data) return <View style={styles.block}><Text style={styles.blockText}>Dados da Tabela Indisponíveis</Text></View>;
 
@@ -165,10 +148,9 @@ const TableBlock = ({ tableData }) => {
             <Table borderStyle={{ borderWidth: 1, borderColor: '#444' }}>
                 <Row data={head} style={styles.head} textStyle={styles.textHead} widthArr={widthArr} />
                 {tableData.data.map((rowData, index) => {
-                    // Garante que a linha de dados tenha o mesmo número de colunas que o head
                     if (rowData.length !== head.length) {
                         console.warn("Linha de dados inconsistente:", rowData);
-                        return null; // Não renderiza linha inconsistente
+                        return null;
                     }
                     return (
                         <Row key={index} data={processRowData(rowData, head)} widthArr={widthArr} style={[styles.dataRow, index % 2 && styles.dataRowAlt]} textStyle={styles.textData} />
@@ -184,7 +166,6 @@ const TableBlock = ({ tableData }) => {
     return <View style={[styles.block, styles.tableBlockOnly]}>{content}</View>;
 };
 
-// --- Componente para Destaque ---
 const HighlightBlock = ({ highlightData }) => {
     if (!highlightData || !highlightData.thumbnail) return null;
     const handlePress = () => { if (highlightData.videoUrl) { Linking.openURL(highlightData.videoUrl).catch(err => console.error("Não foi possível abrir o link:", err) ); } };
@@ -199,7 +180,6 @@ const HighlightBlock = ({ highlightData }) => {
     );
 };
 
-// --- Componente para Notícia ---
 const NewsBlock = ({ newsItem, navigation }) => {
     const handlePress = () => { navigation.navigate('NewsDetail', { newsItem }); };
     const content = ( <View style={styles.newsContent}> <Text style={styles.newsTitle}>{newsItem.title}</Text> <Text style={styles.newsSummary}>{newsItem.summary}</Text> </View> );
@@ -207,7 +187,6 @@ const NewsBlock = ({ newsItem, navigation }) => {
     return ( <TouchableOpacity onPress={handlePress}> <View style={[styles.block, styles.newsBlock, { justifyContent: 'center' }]}>{content}</View> </TouchableOpacity> );
 };
 
-// --- COMPONENTE DE RENDERIZAÇÃO DE CONTEÚDO ---
 const LeagueContentRenderer = ({ data, leagueName }) => {
     const navigation = useNavigation();
     if (!data) return <Text style={styles.blockText}>Selecione uma liga.</Text>;
@@ -223,7 +202,6 @@ const LeagueContentRenderer = ({ data, leagueName }) => {
     );
 };
 
-// --- COMPONENTE PRINCIPAL DA TELA ---
 export default function EsportsScreen() {
     const [selectedLeague, setSelectedLeague] = useState(leagues[0].name);
     const currentData = leagueData[selectedLeague];
@@ -251,7 +229,6 @@ export default function EsportsScreen() {
     );
 }
 
-// --- ESTILOS ---
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#000', },
     content: { flex: 1, backgroundColor: '#2B2B33', borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingTop: 30, },
@@ -278,7 +255,7 @@ const styles = StyleSheet.create({
     teamLogo: { width: 24, height: 24, resizeMode: 'contain', marginRight: 8, },
     teamNameText: { color: '#fff', fontSize: 12, flex: 1, },
     formCell: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: '100%', paddingHorizontal: 5, },
-    formSquare: { width: 10, height: 10, borderRadius: 2, marginHorizontal: 1.5, }, // Diminuí a margem
+    formSquare: { width: 10, height: 10, borderRadius: 2, marginHorizontal: 1.5, },
     highlightBlock: { height: 180, alignItems: 'center', padding: 15, },
     playIcon: { zIndex: 2, opacity: 0.8, textShadowColor: 'rgba(0, 0, 0, 0.75)', textShadowOffset: { width: -1, height: 1 }, textShadowRadius: 10 },
     highlightTitle: { color: '#fff', fontSize: 18, fontWeight: 'bold', position: 'absolute', bottom: 15, left: 15, zIndex: 1, textShadowColor: 'rgba(0, 0, 0, 0.9)', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 5 },

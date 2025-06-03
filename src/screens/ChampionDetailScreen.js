@@ -3,14 +3,11 @@ import React, { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import useChampionDetails from '../hooks/useChampionDetails'; // Seu custom hook
+import useChampionDetails from '../hooks/useChampionDetails';
 
 const DDRAGON_BASE_URL = 'https://ddragon.leagueoflegends.com';
 const { width: screenWidth } = Dimensions.get('window');
 
-// --- DADOS DE EXEMPLO PARA RUNAS ---
-// No aplicativo real, você buscaria os dados completos de runesReforged.json
-// e teria uma lógica para determinar as runas "recomendadas".
 const sampleRecommendedRunes = {
   primaryTree: {
     name: 'Precisão',
@@ -51,7 +48,7 @@ const sampleRecommendedRunes = {
         description: 'Cura ao causar dano a um Campeão inimigo (Tempo de Recarga).',
       },
       {
-        id: 'RavenousHunter', // Nota: Caça Voraz foi removida/alterada, use como exemplo.
+        id: 'RavenousHunter',
         name: 'Caça Voraz (Exemplo Legado)',
         icon: 'perk-images/Styles/Domination/RavenousHunter/RavenousHunter.png',
         description: 'Concede Vampirismo Universal por acúmulo de Caçador de Recompensa.',
@@ -62,25 +59,23 @@ const sampleRecommendedRunes = {
     {
       id: 'StatModAttackSpeed',
       name: 'Velocidade de Ataque',
-      icon: 'perk-images/StatMods/StatModsAttackSpeedIcon.png', // Caminho exato pode variar
+      icon: 'perk-images/StatMods/StatModsAttackSpeedIcon.png',
       description: '+9% de Velocidade de Ataque',
     },
     {
       id: 'StatModAdaptiveForce',
       name: 'Força Adaptativa',
-      icon: 'perk-images/StatMods/StatModsAdaptiveForceIcon.png', // Caminho exato pode variar
+      icon: 'perk-images/StatMods/StatModsAdaptiveForceIcon.png',
       description: '+9 de Força Adaptativa',
     },
     {
       id: 'StatModArmor',
       name: 'Armadura',
-      icon: 'perk-images/StatMods/StatModsArmorIcon.png', // Caminho exato pode variar
+      icon: 'perk-images/StatMods/StatModsArmorIcon.png',
       description: '+6 de Armadura',
     },
   ],
 };
-// --- FIM DOS DADOS DE EXEMPLO ---
-
 
 export default function ChampionDetailScreen() {
     const navigation = useNavigation();
@@ -104,7 +99,6 @@ export default function ChampionDetailScreen() {
         });
     }, [navigation, initialChampionData.name, championDetails]);
 
-    // ... (seus blocos if (loading), if (error), if (!championDetails) permanecem os mesmos) ...
     if (loading) {
         return (
             <View style={styles.centered}>
@@ -165,9 +159,9 @@ export default function ChampionDetailScreen() {
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Habilidades</Text>
                 <View style={styles.skillItem}>
-                    <Image 
-                        source={{ uri: passiveImageUrl }} 
-                        style={styles.skillImage} 
+                    <Image
+                        source={{ uri: passiveImageUrl }}
+                        style={styles.skillImage}
                     />
                     <View style={styles.skillTextContainer}>
                         <Text style={styles.skillName}>{championDetails.passive.name} (Passiva)</Text>
@@ -179,9 +173,9 @@ export default function ChampionDetailScreen() {
                     const spellImageUrl = `${DDRAGON_BASE_URL}/cdn/${latestVersion}/img/spell/${spell.image.full}`;
                     return (
                         <View key={spell.id} style={styles.skillItem}>
-                            <Image 
-                                source={{ uri: spellImageUrl }} 
-                                style={styles.skillImage} 
+                            <Image
+                                source={{ uri: spellImageUrl }}
+                                style={styles.skillImage}
                             />
                             <View style={styles.skillTextContainer}>
                                 <Text style={styles.skillName}>{spell.name} ({skillKey})</Text>
@@ -192,11 +186,9 @@ export default function ChampionDetailScreen() {
                 })}
             </View>
             
-            {/* --- SEÇÃO DE RUNAS RECOMENDADAS --- */}
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Runas Recomendadas</Text>
 
-                {/* Árvore Primária */}
                 <Text style={styles.runeTreeTitle}>{sampleRecommendedRunes.primaryTree.name}</Text>
                 {[sampleRecommendedRunes.primaryTree.keystone, ...sampleRecommendedRunes.primaryTree.runes].map(rune => (
                     <View key={rune.id} style={styles.runeItem}>
@@ -208,7 +200,6 @@ export default function ChampionDetailScreen() {
                     </View>
                 ))}
 
-                {/* Árvore Secundária */}
                 <Text style={styles.runeTreeTitle}>{sampleRecommendedRunes.secondaryTree.name}</Text>
                 {sampleRecommendedRunes.secondaryTree.runes.map(rune => (
                     <View key={rune.id} style={styles.runeItem}>
@@ -220,7 +211,6 @@ export default function ChampionDetailScreen() {
                     </View>
                 ))}
 
-                {/* Fragmentos de Atributo */}
                 <Text style={styles.runeTreeTitle}>Fragmentos de Atributo</Text>
                 {sampleRecommendedRunes.statShards.map(shard => (
                      <View key={shard.id} style={styles.runeItem}>
@@ -232,14 +222,12 @@ export default function ChampionDetailScreen() {
                     </View>
                 ))}
             </View>
-            {/* --- FIM DA SEÇÃO DE RUNAS --- */}
 
         </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
-    // ... (seus estilos existentes)
     container: {
         flex: 1,
         backgroundColor: '#18181C',
@@ -270,15 +258,15 @@ const styles = StyleSheet.create({
     },
     splashImage: {
         width: screenWidth,
-        height: screenWidth * 0.58, 
+        height: screenWidth * 0.58,
         resizeMode: 'cover',
     },
     headerContent: {
         padding: 15,
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.3)', 
-        marginTop: -80, 
-        paddingTop: 20, 
+        backgroundColor: 'rgba(0,0,0,0.3)',
+        marginTop: -80,
+        paddingTop: 20,
     },
     championName: {
         fontSize: 28,
@@ -298,7 +286,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     section: {
-        marginTop: 20, 
+        marginTop: 20,
         paddingHorizontal: 20,
         paddingBottom: 15,
         borderBottomWidth: 1,
@@ -308,19 +296,19 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: 'bold',
         color: '#00d9ff',
-        marginBottom: 15, // Aumentei um pouco para dar espaço antes do conteúdo da seção
+        marginBottom: 15,
     },
     sectionContent: {
         fontSize: 16,
         color: '#ddd',
         lineHeight: 24,
     },
-    skillItem: { // Estilo existente para habilidades
+    skillItem: {
         flexDirection: 'row',
         marginBottom: 15,
-        alignItems: 'flex-start', 
+        alignItems: 'flex-start',
     },
-    skillImage: { // Estilo existente para imagens de habilidades
+    skillImage: {
         width: 50,
         height: 50,
         borderRadius: 8,
@@ -328,44 +316,43 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#00d9ff',
     },
-    skillTextContainer: { // Estilo existente para texto de habilidades
-        flex: 1, 
+    skillTextContainer: {
+        flex: 1,
     },
-    skillName: { // Estilo existente para nome de habilidades
+    skillName: {
         fontSize: 17,
         fontWeight: 'bold',
         color: 'white',
         marginBottom: 3,
     },
-    skillDescription: { // Estilo existente para descrição de habilidades
+    skillDescription: {
         fontSize: 14,
         color: '#bbb',
         lineHeight: 20,
     },
-    // --- NOVOS ESTILOS PARA RUNAS ---
     runeTreeTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#FFD700', // Dourado para destacar a árvore
+        color: '#FFD700',
         marginTop: 15,
         marginBottom: 10,
     },
     runeItem: {
         flexDirection: 'row',
-        alignItems: 'center', // Alinha imagem e texto verticalmente
+        alignItems: 'center',
         marginBottom: 12,
         paddingVertical: 8,
         paddingHorizontal: 5,
-        backgroundColor: 'rgba(255, 255, 255, 0.05)', // Um fundo sutil para cada item de runa
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
         borderRadius: 6,
     },
     runeImage: {
-        width: 40, // Tamanho um pouco menor que o de habilidades
+        width: 40,
         height: 40,
-        borderRadius: 20, // Deixa redondo
+        borderRadius: 20,
         marginRight: 12,
         borderWidth: 1,
-        borderColor: '#777', // Uma borda mais sutil para runas
+        borderColor: '#777',
     },
     runeTextContainer: {
         flex: 1,

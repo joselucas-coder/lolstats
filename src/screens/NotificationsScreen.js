@@ -1,32 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Importar ícones
+import { Ionicons } from '@expo/vector-icons';
 
-// Dados de exemplo - No futuro, isso virá do armazenamento ou de uma API
 const initialNotifications = [
     { id: '1', title: 'Nova Atualização!', message: 'O Patch 25.11 acabou de chegar com mudanças incríveis!' },
-    { id: '2', title: 'Novo Campeão', message: 'Aurora, a Bruxa das Fraldas, está disponível! Veja as habilidades dela.' },
-    { id: '3', title: 'Promoção na Loja', message: 'Skins Lendárias com 50% de desconto. Não perca!' },
-    { id: '4', title: 'Sua Partida Começa!', message: 'Sua partida ranqueada está prestes a começar.' },
-    { id: '5', title: 'Destaque Esports', message: 'LOUD enfrenta paiN Gaming na final do CBLOL!' },
-    { id: '6', title: 'Dica do Dia', message: 'Lembre-se de usar suas sentinelas para controlar a visão.' },
-    { id: '7', title: 'Bem-vindo!', message: 'Obrigado por usar o LOL Stats App!' },
 ];
 
 export default function NotificationScreen() {
-    // Usamos useState para gerenciar a lista de notificações
     const [notifications, setNotifications] = useState(initialNotifications);
 
-    // Função para remover uma notificação da lista
     const dismissNotification = (idToDismiss) => {
         setNotifications(currentNotifications =>
             currentNotifications.filter(notification => notification.id !== idToDismiss)
         );
-        // Aqui, no futuro, você também marcaria a notificação como lida
-        // em seu sistema de armazenamento (AsyncStorage, Firestore, etc.)
     };
 
-    // Função para renderizar cada item da lista
     const renderNotificationItem = ({ item }) => (
         <View style={styles.notificationBox}>
             <View style={styles.notificationContent}>
@@ -49,10 +37,10 @@ export default function NotificationScreen() {
 
                 {notifications.length > 0 ? (
                     <FlatList
-                        data={notifications} // Nossos dados vêm do estado
-                        renderItem={renderNotificationItem} // Como renderizar cada item
-                        keyExtractor={item => item.id} // Chave única para cada item
-                        contentContainerStyle={styles.scrollContent} // Estilo do conteúdo
+                        data={notifications}
+                        renderItem={renderNotificationItem}
+                        keyExtractor={item => item.id}
+                        contentContainerStyle={styles.scrollContent}
                     />
                 ) : (
                     <View style={styles.emptyContainer}>
@@ -65,7 +53,6 @@ export default function NotificationScreen() {
     );
 }
 
-// --- ESTILOS ATUALIZADOS ---
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -90,30 +77,30 @@ const styles = StyleSheet.create({
     },
     notificationBox: {
         backgroundColor: '#18181C',
-        minHeight: 80, // Usar minHeight para flexibilidade
+        minHeight: 80,
         borderRadius: 10,
-        marginBottom: 15, // Reduzi um pouco
+        marginBottom: 15,
         padding: 15,
-        flexDirection: 'row', // Para alinhar conteúdo e botão
-        alignItems: 'center', // Alinhar verticalmente
-        justifyContent: 'space-between', // Espaço entre conteúdo e botão
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
     },
     notificationContent: {
-        flex: 1, // Permite que o texto ocupe o espaço disponível
-        marginRight: 10, // Espaço antes do botão
+        flex: 1,
+        marginRight: 10,
     },
     notificationTitle: {
-        color: '#00d9ff', // Um destaque para o título
+        color: '#00d9ff',
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 5,
     },
     notificationText: {
-        color: '#ddd', // Cor um pouco mais clara
+        color: '#ddd',
         fontSize: 14,
     },
     dismissButton: {
-        padding: 5, // Área de clique maior
+        padding: 5,
     },
     emptyContainer: {
         flex: 1,

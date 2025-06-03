@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Útil se precisar navegar daqui
+import { useNavigation } from '@react-navigation/native';
 
 export default function ConfiguracaoScreen() {
     const navigation = useNavigation();
-    const [notificationsEnabled, setNotificationsEnabled] = useState(true); // Exemplo de estado
-    const [darkModeEnabled, setDarkModeEnabled] = useState(true); // Exemplo de estado
+    const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+    const [darkModeEnabled, setDarkModeEnabled] = useState(true);
 
-    // Função para renderizar uma linha de configuração
     const renderSettingRow = (label, component) => (
         <View style={styles.settingRow}>
             <Text style={styles.settingLabel}>{label}</Text>
@@ -17,17 +16,15 @@ export default function ConfiguracaoScreen() {
 
     return (
         <View style={styles.container}>
-            {/* Você pode adicionar um cabeçalho aqui se o Drawer não fornecer um */}
             <Text style={styles.headerTitle}>Configurações</Text>
 
             <ScrollView style={styles.scrollView}>
 
-                {/* --- Seção de Notificações --- */}
                 <Text style={styles.sectionTitle}>Notificações</Text>
                 {renderSettingRow(
                     "Receber Notificações Push",
                     <Switch
-                        trackColor={{ false: "#767577", true: "#00b0d6" }} // Cores do Switch
+                        trackColor={{ false: "#767577", true: "#00b0d6" }}
                         thumbColor={notificationsEnabled ? "#00d9ff" : "#f4f3f4"}
                         ios_backgroundColor="#3e3e3e"
                         onValueChange={() => setNotificationsEnabled(previousState => !previousState)}
@@ -39,8 +36,6 @@ export default function ConfiguracaoScreen() {
                      <Text style={styles.arrow}>c</Text>
                  </TouchableOpacity>
 
-
-                {/* --- Seção de Aparência --- */}
                 <Text style={styles.sectionTitle}>Aparência</Text>
                 {renderSettingRow(
                     "Modo Escuro",
@@ -57,7 +52,6 @@ export default function ConfiguracaoScreen() {
                       <Text style={styles.arrow}>c</Text>
                  </TouchableOpacity>
 
-                {/* --- Seção Sobre --- */}
                  <Text style={styles.sectionTitle}>Sobre</Text>
                  <TouchableOpacity style={styles.touchableRow} onPress={() => alert('Abrir Política de Privacidade!')}>
                      <Text style={styles.settingLabel}>Política de Privacidade</Text>
@@ -68,17 +62,15 @@ export default function ConfiguracaoScreen() {
                      <Text style={styles.settingLabel}>1.0.0</Text>
                  </TouchableOpacity>
 
-
             </ScrollView>
         </View>
     );
 }
 
-// --- ESTILOS ---
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#18181C', // Fundo escuro principal
+        backgroundColor: '#18181C',
     },
     headerTitle: {
         fontSize: 22,
@@ -86,14 +78,14 @@ const styles = StyleSheet.create({
         color: '#fff',
         padding: 20,
         paddingBottom: 10,
-        backgroundColor: '#2B2B33', // Um fundo ligeiramente diferente para o cabeçalho
+        backgroundColor: '#2B2B33',
         textAlign: 'center',
     },
     scrollView: {
         flex: 1,
     },
     sectionTitle: {
-        color: '#00d9ff', // Azul ciano
+        color: '#00d9ff',
         fontSize: 16,
         fontWeight: 'bold',
         marginTop: 25,
@@ -104,18 +96,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#2B2B33', // Fundo dos itens
+        backgroundColor: '#2B2B33',
         paddingVertical: 15,
         paddingHorizontal: 20,
         borderBottomWidth: 1,
-        borderBottomColor: '#18181C', // Linha separadora sutil
+        borderBottomColor: '#18181C',
     },
-    touchableRow: { // Para linhas clicáveis que levam a outras telas
+    touchableRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#2B2B33',
-        paddingVertical: 18, // Um pouco mais de padding vertical
+        paddingVertical: 18,
         paddingHorizontal: 20,
         borderBottomWidth: 1,
         borderBottomColor: '#18181C',
@@ -125,7 +117,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     arrow: {
-        color: '#888', // Seta cinza
+        color: '#888',
         fontSize: 18,
         fontWeight: 'bold',
     }

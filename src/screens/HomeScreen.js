@@ -1,45 +1,31 @@
-// screens/HomeScreen.js (MODIFICADO)
+// screens/HomeScreen.js
 
-import React from 'react'; // Removidos useState e useEffect
+import React from 'react';
 import {
     View, Text, StyleSheet, TouchableOpacity, Image,
-    ScrollView, ImageBackground // Removidos Modal, Pressable, ActivityIndicator, Dimensions
+    ScrollView, ImageBackground
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-// import { auth } from '../firebaseConfig'; // Removido, a menos que use para outra coisa
 import { LinearGradient } from 'expo-linear-gradient';
-import { detailedRolesData as importedRolesData } from '../data/championData'; // <-- IMPORTA OS DADOS
+import { detailedRolesData as importedRolesData } from '../data/championData';
 
-const patchVersion = '14.10'; // Mantido apenas se usar em 'UpdatesScreen' link
+const patchVersion = '14.10';
 
-// Usa os dados importados
 const roles = Object.values(importedRolesData);
 
-// --- COMPONENTE PRINCIPAL ---
 export default function HomeScreen() {
     const navigation = useNavigation();
 
-    // REMOVIDO: Todos os useState e useEffect relacionados a modais e API.
-    // REMOVIDO: Todas as funções open/closeModal e find/get Rune/Champion.
-
-    // --- FUNÇÃO DE NAVEGAÇÃO ---
     const navigateToChampions = (roleName) => {
         navigation.navigate('ChampionsScreen', { roleName: roleName });
     };
 
-    // REMOVIDO: Checagem de 'loading'.
-
     return (
         <View style={styles.container}>
-
-            {/* --- MODAIS REMOVIDOS --- */}
-
-            {/* --- CONTEÚDO PRINCIPAL DA TELA --- */}
             <View style={styles.containerConteudo}>
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.mainScrollContent}>
                     <View style={styles.contentWrapper}>
 
-                        {/* CARD "PARTIDA DA SEMANA" - Mantido */}
                         <View style={styles.matchOfTheWeekCard}>
                            <View style={[styles.playerCardHalf, styles.playerCardHalfLeft]}>
                                 <Image source={{ uri: 'https://liquipedia.net/commons/images/thumb/8/8b/LOUD_allmode.png/900px-LOUD_allmode.png' }} style={styles.teamLogoImage} resizeMode="contain" />
@@ -55,7 +41,6 @@ export default function HomeScreen() {
                             </View>
                         </View>
 
-                        {/* CARD "ÚLTIMAS ATUALIZAÇÕES" - Mantido */}
                         <View style={styles.section}><Text style={styles.sectionTitle}>Últimas Atualizações</Text></View>
                         <TouchableOpacity onPress={() => navigation.navigate('UpdatesScreen')}>
                             <ImageBackground source={{ uri: 'https://preview.redd.it/spirit-blossom-irelia-splash-art-v0-vyi36bf6bzue1.jpeg?width=1080&crop=smart&auto=webp&s=7354b31b966ee1171746e46ba0a09c7b56babc24' }} style={styles.updateCard} imageStyle={{ borderRadius: 20 }} resizeMode="cover">
@@ -65,30 +50,25 @@ export default function HomeScreen() {
                             </ImageBackground>
                         </TouchableOpacity>
 
-                        {/* SEÇÃO CAMPEÕES - MODIFICADA */}
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Campeões</Text>
-                            {/* --- BOTÃO VER TUDO MODIFICADO --- */}
                             <TouchableOpacity onPress={() => navigateToChampions('ALL')}>
                                 <Text style={styles.viewMore}>Ver Tudo</Text>
                             </TouchableOpacity>
                         </View>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.rolesContainer}>
-                            {/* --- BOTÕES DE ROLE MODIFICADOS --- */}
                             {roles.map((role) => (
                                 <TouchableOpacity
                                     key={role.name}
                                     style={styles.roleButton}
-                                    onPress={() => navigateToChampions(role.name)} // <--- AQUI A MUDANÇA
+                                    onPress={() => navigateToChampions(role.name)}
                                 >
-                                    {/* Agora usa a imagem vinda dos dados importados */}
                                     <Image source={role.image} style={{ width: 50, height: 50 }} />
                                     <Text style={styles.roleText}>{role.name}</Text>
                                 </TouchableOpacity>
                             ))}
                         </ScrollView>
 
-                        {/* SEÇÃO ESPORTS - Mantida */}
                         <View style={styles.section}><Text style={styles.sectionTitle}>Esports</Text><TouchableOpacity onPress={() => navigation.navigate('EsportsScreen')}><Text style={styles.viewMore}>Ver Mais</Text></TouchableOpacity></View>
                          <View style={styles.matchRow}>
                              <View style={styles.matchCard}><View style={styles.matchColumn}><Image source={{ uri: 'https://liquipedia.net/commons/images/thumb/8/8b/LOUD_allmode.png/900px-LOUD_allmode.png' }} style={styles.teamLogo} /><Text style={styles.teamName}>LOUD</Text></View><Text style={styles.matchScoreText}>0 - 3</Text><View style={styles.matchColumn}><Image source={{ uri: 'https://liquipedia.net/commons/images/thumb/3/3b/Red_Canids_allmode.png/900px-Red_Canids_allmode.png' }} style={styles.teamLogo} /><Text style={styles.teamName}>RED</Text></View></View>
@@ -101,7 +81,6 @@ export default function HomeScreen() {
     );
 }
 
-// --- ESTILOS (Mantidos, mas os de MODAL podem ser removidos) ---
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#000' },
     containerConteudo: { flex: 1, backgroundColor: '#2B2B33', borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingTop: 30, paddingHorizontal: 17 },
@@ -134,5 +113,4 @@ const styles = StyleSheet.create({
     teamLogo: { width: 40, height: 40, marginBottom: 5, resizeMode: 'contain' },
     teamName: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
     matchScoreText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-    // AQUI ESTAVAM OS ESTILOS DO MODAL - PODEM SER REMOVIDOS
 });

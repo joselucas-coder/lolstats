@@ -1,23 +1,23 @@
-// App.js
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import {
+    createDrawerNavigator,
+    DrawerContentScrollView, // Importado
+    DrawerItemList,         // Importado
+    DrawerItem              // Importado
+} from '@react-navigation/drawer';
 import { Image, TouchableOpacity, Text, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth'; // signOut importado
 import { useNavigation } from '@react-navigation/native';
 
-import { auth } from './src/firebaseConfig'; //
-import AuthStack from './src/navigation/AuthStack'; //
-import MainTabs from './src/navigation/MainTabs'; //
-
-import ProfileScreen from './src/screens/ProfileScreen'; //
-import ConfiguracaoScreen from './src/screens/ConfiguracaoScreen'; //
+import { auth } from './firebaseConfig';
+import AuthStack from './src/navigation/AuthStack';
+import MainTabs from './src/navigation/MainTabs';
+import ProfileScreen from './src/screens/ProfileScreen';
 
 const Drawer = createDrawerNavigator();
-
-// Componente: Imagem do Perfil no topo
-function HeaderProfileImage() { //
+function HeaderProfileImage() {
     const navigation = useNavigation();
     const imageUrl = auth.currentUser?.photoURL || 'https://wallpapers.com/images/hd/meme-profile-picture-2rhxt0ddudotto63.jpg';
 
@@ -30,26 +30,14 @@ function HeaderProfileImage() { //
         </TouchableOpacity>
     );
 }
-
-// Componente: Título do Header Customizado
 function CustomHeaderTitle() {
     return (
         <View style={styles.headerTitleContainerStyle2}>
-            {/* Opção A: Nome do App */}
             <Text style={styles.headerAppNameStyle2}>Lol Stats</Text>
-
-            {/* Opção B: Imagem da Logo */}
-            {/* <Image
-                source={require('./src/assets/logo_do_app.png')} // AJUSTE O CAMINHO
-                style={styles.headerLogoStyle2}
-                resizeMode="contain"
-            /> */}
         </View>
     );
 }
-
-// Componente: Botão de Voltar para o Drawer
-const DrawerBackButton = () => { //
+const DrawerBackButton = () => {
     const navigation = useNavigation();
     return (
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginLeft: 15 }}>
@@ -57,34 +45,60 @@ const DrawerBackButton = () => { //
         </TouchableOpacity>
     );
 };
+function CustomDrawerContent(props) {
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error("Erro ao fazer logout: ", error);
+        }
+    };
+
+    return (
+        <DrawerContentScrollView {...props} style={{ backgroundColor: '#111' /* Mantém o estilo do drawer */ }}>
+            <DrawerItemList {...props} />
+            <DrawerItem
+                label="Sair do App"
+                labelStyle={{ color: '#fff' }} // Estilo do texto
+                icon={({ color, size }) => ( // Ícone
+                    <Ionicons name="log-out-outline" size={size} color={'#fff'} /* Cor do ícone */ />
+                )}
+                onPress={handleLogout}
+                inactiveTintColor="#fff" // Garante que a cor do ícone e texto seja branca quando inativo
+            />
+        </DrawerContentScrollView>
+    );
+}
+
 
 export default function App() {
-    const [user, setUser] = useState(null); //
-    const [loading, setLoading] = useState(true); //
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => { //
+    useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser); //
-            setLoading(false); //
+            setUser(currentUser);
+            setLoading(false);
         });
-        return () => unsubscribe(); //
+        return () => unsubscribe();
     }, []);
 
-    if (loading) return null; //
+    if (loading) return null;
 
     return (
         <NavigationContainer>
             {user ? (
                 <Drawer.Navigator
+                    drawerContent={props => <CustomDrawerContent {...props} />}
                     screenOptions={{
-                        headerStyle: { backgroundColor: '#000' }, //
-                        headerTintColor: '#fff', //
-                        headerTitleAlign: 'center', // <<<< ADICIONADO DE VOLTA
-                        drawerStyle: { backgroundColor: '#111', width: 240 }, //
-                        drawerLabelStyle: { color: '#fff' }, //
-                        headerLeft: () => <HeaderProfileImage />, //
-                        drawerActiveTintColor: '#00d9ff', //
-                        drawerInactiveTintColor: '#fff', //
+                        headerStyle: { backgroundColor: '#000' },
+                        headerTintColor: '#fff',
+                        headerTitleAlign: 'center',
+                        drawerStyle: { backgroundColor: '#111', width: 240 },
+                        drawerLabelStyle: { color: '#fff' },
+                        headerLeft: () => <HeaderProfileImage />,
+                        drawerActiveTintColor: '#00d9ff',
+                        drawerInactiveTintColor: '#fff',
                     }}
                 >
                     <Drawer.Screen
@@ -92,7 +106,7 @@ export default function App() {
                         component={MainTabs}
                         options={{
                             headerTitle: () => <CustomHeaderTitle />,
-                            drawerLabel: 'Página Inicial', //
+                            drawerLabel: 'Página Inicial',
                             drawerIcon: ({ color, size }) => (
                                 <Ionicons name="home-outline" size={size} color={color} />
                             ),
@@ -102,26 +116,16 @@ export default function App() {
                         name="perfil"
                         component={ProfileScreen}
                         options={{
-                            title: 'Perfil', // Deixando o título padrão para esta tela
-                            gestureEnabled: false, //
-                            swipeEnabled: false, //
-                            headerLeft: () => <DrawerBackButton />, //
+                            title: 'Perfil',
+                            gestureEnabled: false,
+                            swipeEnabled: false,
+                            headerLeft: () => <DrawerBackButton />,
                             drawerIcon: ({ color, size }) => (
                                 <Ionicons name="person-outline" size={size} color={color} />
                             ),
                         }}
                     />
-                    <Drawer.Screen
-                        name="Configuracoes"
-                        component={ConfiguracaoScreen}
-                        options={{
-                            title: 'Configurações', // Deixando o título padrão para esta tela
-                            headerLeft: () => <DrawerBackButton />,
-                            drawerIcon: ({ color, size }) => (
-                                <Ionicons name="settings-outline" size={size} color={color} />
-                            ),
-                        }}
-                    />
+                    {/* A TELA DE CONFIGURAÇÕES FOI REMOVIDA DAQUI */}
                 </Drawer.Navigator>
             ) : (
                 <AuthStack />
@@ -131,10 +135,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-    // Estilos para Opção 2
     headerTitleContainerStyle2: {
-        // Não precisa de flex: 1 se headerTitleAlign: 'center' está no navigator
-        // Apenas certifique-se de que o conteúdo interno está como você quer
     },
     headerAppNameStyle2: {
         color: '#fff',
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     headerLogoStyle2: {
-        width: 100, // Ajuste conforme o tamanho da sua logo
-        height: 30, // Ajuste conforme o tamanho da sua logo
+        width: 100,
+        height: 30,
     },
 });

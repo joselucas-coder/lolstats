@@ -1,16 +1,14 @@
 import React, { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { detailedRolesData, allChampionsList, getChampionImageUri } from '../data/championData'; // <-- MUDOU PARA ../data/
+import { detailedRolesData, allChampionsList, getChampionImageUri } from '../data/championData';
 import { Ionicons } from '@expo/vector-icons';
 
-// Modifique ChampionItem para aceitar onPress e navigation
 const ChampionItem = ({ item, onPress }) => (
     <TouchableOpacity onPress={() => onPress(item)} style={styles.championCard}>
         <Image source={{ uri: getChampionImageUri(item.id) }} style={styles.championImage} />
         <View style={styles.championInfo}>
             <Text style={styles.championName}>{item.name}</Text>
-            {/* Você pode adicionar mais informações aqui se desejar, como a role primária */}
             <Text style={styles.championWinRate}>Taxa de Vitória: {item.winRate || 'N/A'}</Text>
         </View>
     </TouchableOpacity>
@@ -43,10 +41,7 @@ export default function ChampionsScreen() {
         });
     }, [navigation, screenTitle]);
 
-    // Função para lidar com o clique no campeão
     const handleChampionPress = (champion) => {
-        // Navega para a tela ChampionDetailScreen, passando o objeto do campeão
-        // Certifique-se de que 'ChampionDetail' está definido no seu Stack Navigator
         navigation.navigate('ChampionDetail', { championData: champion });
     };
 
@@ -74,7 +69,7 @@ const styles = StyleSheet.create({
     },
     listContent: {
         padding: 15,
-        paddingBottom: 80, // Adiciona padding inferior para evitar sobreposição com TabNavigator, se houver
+        paddingBottom: 80,
     },
     championCard: {
         backgroundColor: '#2B2B33',
@@ -84,20 +79,20 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#333', // Uma borda sutil
-        shadowColor: '#000', // Sombra para iOS
+        borderColor: '#333',
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 3,
-        elevation: 4, // Sombra para Android
+        elevation: 4,
     },
     championImage: {
         width: 60,
         height: 60,
-        borderRadius: 30, // Imagem redonda
+        borderRadius: 30,
         marginRight: 15,
         borderWidth: 1,
-        borderColor: '#00d9ff', // Borda temática
+        borderColor: '#00d9ff',
     },
     championInfo: {
         flex: 1,

@@ -1,4 +1,3 @@
-// data/championData.js
 
 export const patchVersion = '14.10.1';
 export const language = 'pt_BR';

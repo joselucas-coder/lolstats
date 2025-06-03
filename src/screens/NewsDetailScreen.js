@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function NewsDetailScreen({ route }) {
     const navigation = useNavigation();
-    const { newsItem } = route.params; // Pega o item da notícia passado pela navegação
+    const { newsItem } = route.params;
 
     return (
         <View style={styles.container}>
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#1f1f27',
-        paddingTop: 50, // Espaço para o botão de voltar
+        paddingTop: 50,
     },
      backButton: {
         position: 'absolute',

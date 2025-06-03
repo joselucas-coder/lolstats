@@ -1,4 +1,3 @@
-// MainTabs.js
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,10 +5,8 @@ import { Image } from 'react-native';
 
 import HomeStack from './HomeStack';
 import SearchScreen from '../screens/SearchScreen';
-// import EsportsScreen from './screens/EsportsScreen'; // <<< REMOVA ESTA LINHA
 import EsportsStack from './EsportsStack';           // <<< ADICIONE ESTA LINHA
 import NotificationScreen from '../screens/NotificationsScreen';
-// import ProfileScreen from './screens/ProfileScreen'; // <<< Você não está usando ProfileScreen nas abas, mas se precisar, mantenha
 
 const Tab = createBottomTabNavigator();
 const NEW_ICON_SIZE = 30;

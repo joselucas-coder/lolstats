@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, StyleSheet, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { auth } from './../../firebaseConfig';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
@@ -11,8 +11,8 @@ WebBrowser.maybeCompleteAuthSession();
 export default function LoginScreen({ navigation }) {
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId: '1056193214215-4uegt7esptiu7bude5dsjd7bed90ngqv.apps.googleusercontent.com',
-    androidClientId: 'SEU_ANDROID_CLIENT_ID',
-    iosClientId: 'SEU_IOS_CLIENT_ID',
+    androidClientId: '//',
+    iosClientId: '//',
   });
 
   useEffect(() => {
@@ -105,13 +105,7 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.buttonText}>{isRegistering ? 'Cadastrar' : 'Entrar'}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: '#DB4437' }]}
-        onPress={() => promptAsync()}
-        disabled={!request}
-      >
-        <Text style={styles.buttonText}>Entrar com Google</Text>
-      </TouchableOpacity>
+      
 
       <TouchableOpacity onPress={() => setIsRegistering(!isRegistering)}>
         <Text style={styles.toggleText}>
