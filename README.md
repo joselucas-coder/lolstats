@@ -119,13 +119,12 @@ Para executar este projeto localmente, siga os passos abaixo.
 
 O projeto está organizado da seguinte forma para facilitar a manutenção e escalabilidade:
 
-
-
+```
 lolstats/
 ├── src/
 │   ├── assets/           # Imagens, fontes e outros recursos estáticos
-│   ├── data/             # Dados estáticos como championData.js e players.json
-│   ├── hooks/            # Hooks customizados, como useChampionDetails.js
+│   ├── data/             # Dados estáticos como `championData.js` e `players.json`
+│   ├── hooks/            # Hooks customizados, como `useChampionDetails.js`
 │   ├── navigation/       # Stacks de navegação e configurações do React Navigation
 │   ├── screens/          # Componentes de tela principais da aplicação
 │   │   ├── HomeScreen.js
@@ -136,3 +135,4 @@ lolstats/
 ├── App.js                # Componente raiz e container de navegação principal
 ├── firebaseConfig.js     # Configuração e inicialização do Firebase
 └── package.json          # Dependências e scripts do projeto
+```
